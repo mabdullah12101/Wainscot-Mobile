@@ -14,6 +14,7 @@ import DrawerContent from '../components/DrawerContent';
 import HeaderHome from '../components/Header/home';
 import Order from '../screen/Order';
 import HeaderDefault from '../components/Header/default';
+import EditProfile from '../screen/Profile/edit';
 
 function MenuNavigator() {
   // DAFTARKAN MENU YANG NANTINYA AKAN MASUK KE DALAM DRAWER DISINI
@@ -29,7 +30,22 @@ function MenuNavigator() {
           ),
         }}
       />
-      <Drawer.Screen name="Profile" component={Profile} />
+      <Drawer.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          header: props => (
+            <HeaderDefault
+              {...props}
+              name={'Profile'}
+              variant={'bg-main-blue'}
+            />
+          ),
+          drawerIcon: ({size, color}) => (
+            <Icon name="user" color={color} size={size} />
+          ),
+        }}
+      />
       {/* MY BOOKING */}
       {/* MY WISHLIST */}
     </Drawer.Navigator>
@@ -58,6 +74,19 @@ export default function AppStackNavigator() {
             <HeaderDefault
               {...props}
               name="Checkout"
+              variant={'bg-main-blue'}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="Edit Profile"
+        component={EditProfile}
+        options={{
+          header: props => (
+            <HeaderDefault
+              {...props}
+              name="Edit Profile"
               variant={'bg-main-blue'}
             />
           ),

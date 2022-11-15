@@ -5,6 +5,7 @@ export default function InputAuth({
   placeholder,
   keyboardType = 'default',
   secureTextEntry = false,
+  editable = true,
 }) {
   return (
     <TextInput
@@ -12,6 +13,8 @@ export default function InputAuth({
       placeholder={placeholder}
       keyboardType={keyboardType}
       secureTextEntry={secureTextEntry}
+      autoCapitalize={'none'}
+      editable={editable}
     />
   );
 }

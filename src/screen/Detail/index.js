@@ -14,8 +14,8 @@ export default function Detail({navigation}) {
   };
 
   return (
-    <ScrollView className="flex-[1]">
-      <View className="absolute bottom-0 z-50 w-full px-7">
+    <ScrollView>
+      <View className="absolute bottom-5 z-50 w-full px-7">
         <TouchableOpacity
           className="w-full items-center bg-main-blue py-4 rounded-2xl shadow-lg shadow-blue-500"
           onPress={navOrder}>
@@ -65,7 +65,7 @@ export default function Detail({navigation}) {
           </View>
         </View>
 
-        <View className="bg-[#192038] rounded-t-[40px] mt-12 pt-7 h-56">
+        <View className="bg-[#192038] rounded-t-[40px] mt-12 pt-7">
           <View className="px-7">
             <Text className="font-poppins600 text-xl text-white tracking-medium">
               Event Detail
@@ -76,8 +76,8 @@ export default function Detail({navigation}) {
             </Text>
           </View>
 
-          <View className="bg-white rounded-t-[40px] mt-6 px-7 pt-7">
-            <Text className="font-poppins600 text-xl text-main-black tracking-medium">
+          <View className="bg-white rounded-t-[40px] mt-6 px-7 pt-7 pb-28">
+            <Text className="font-poppins600 text-xl text-main-black tracking-medium mb-4">
               Location
             </Text>
 
