@@ -7,7 +7,7 @@ export default function InputRadio({content, onPress, checked}) {
     <TouchableOpacity className="flex-row items-center mr-12" onPress={onPress}>
       <RadioButton
         value={content}
-        status={checked === content ? 'checked' : 'unchecked'}
+        status={checked === content.toLowerCase() ? 'checked' : 'unchecked'}
         onPress={onPress}
       />
       <Text className="font-poppins400 text-sm text-[#777777] tracking-medium">

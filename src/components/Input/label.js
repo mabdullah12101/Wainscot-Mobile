@@ -7,6 +7,8 @@ export default function InputWithLabel({
   placeholder,
   keyboardType = 'default',
   secureTextEntry = false,
+  value,
+  editable,
 }) {
   return (
     <View className="mb-3">
@@ -17,6 +19,8 @@ export default function InputWithLabel({
         placeholder={placeholder}
         keyboardType={keyboardType}
         secureTextEntry={secureTextEntry}
+        value={value}
+        editable={editable}
       />
     </View>
   );

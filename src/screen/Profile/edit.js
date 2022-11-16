@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   ScrollView,
@@ -12,33 +12,96 @@ import RNPickerSelect from 'react-native-picker-select';
 import Icon from 'react-native-vector-icons/AntDesign';
 import InputRadio from '../../components/Input/radio';
 import DatePicker from 'react-native-date-picker';
-import InputAuth from '../../components/Input/auth';
+// import InputAuth from '../../components/Input/auth';
 import ButtonAuth from '../../components/Button/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from '../../utils/axios';
+import Config from 'react-native-config';
+import moment from 'moment';
 
 export default function EditProfile() {
-  const [checked, setChecked] = useState();
-  const [date, setDate] = useState(new Date());
+  // const [date, setDate] = useState(new Date());
+  const [userId, setUserId] = useState('');
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState({});
+
+  const [form, setForm] = useState({
+    name: '',
+    username: '',
+    email: '',
+    phoneNumber: '',
+    gender: '',
+    profession: '',
+    nationality: '',
+    dateOfBirth: '',
+  });
+
+  // console.log(moment(date).format('DD-MM-YYYY'));
+  // console.log(date);
+  console.log(new Date(user.dateOfBirth));
+  console.log(form);
+
+  useEffect(() => {
+    getUserById();
+  }, []);
+
+  const getUserById = async () => {
+    try {
+      const data = await AsyncStorage.getItem('userId');
+      setUserId(data);
+      const result = await axios.get(`user/${data}`);
+      const resultData = result.data.data[0];
+      setUser(resultData);
+      setForm({
+        name: resultData.name,
+        username: resultData.username,
+        email: resultData.email,
+        phoneNumber: resultData.phoneNumber,
+        gender: resultData.gender,
+        profession: resultData.profession,
+        nationality: resultData.nationality,
+        dateOfBirth: resultData.dateOfBirth,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleEditProfile = async () => {
+    try {
+      console.log(form);
+      const result = await axios.patch(`user/${userId}`, form);
+      alert(result.data.message);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <ScrollView className="flex-1 bg-main-blue">
       <View className="bg-white flex-1 rounded-t-[40px] p-7">
         <View className="w-[137px] h-[137px] mx-auto border-4 border-main-blue rounded-full p-2 overflow-hidden">
           <Image
-            source={require('../../assets/img/profile.png')}
+            source={{
+              uri: user.image
+                ? Config.CLOUDINARY_URL_IMAGE + user.image
+                : Config.CLOUDINARY_DEFAULT_IMAGE,
+            }}
             className="w-full h-full rounded-full"
           />
         </View>
 
         <View className="mt-12">
-          <InputWithLabel label={'Name'} placeholder={'Jhon Tomson'} />
-          <InputWithLabel label={'Username'} placeholder={'@jhont0'} />
+          <InputWithLabel label={'Name'} value={form.name} />
+          <InputWithLabel label={'Username'} value={form.username} />
+
           <InputWithLabel
             label={'Email'}
-            placeholder={'jhont0@mail.com'}
             keyboardType={'email-address'}
+            value={form.email}
+            editable={false}
           />
-          <InputWithLabel label={'Phone'} placeholder={'081234567890'} />
+          <InputWithLabel label={'Phone'} value={form.phoneNumber} />
 
           <View className="mb-7">
             <Text className="text-main-black font-poppins400 tracking-medium text-sm mb-3">
@@ -47,15 +110,15 @@ export default function EditProfile() {
 
             <View className="flex-row">
               <InputRadio
-                checked={checked}
+                checked={form.gender}
                 content="Male"
-                onPress={() => setChecked('Male')}
+                onPress={() => setForm({...form, ['gender']: 'male'})}
               />
 
               <InputRadio
-                checked={checked}
+                checked={form.gender}
                 content="Female"
-                onPress={() => setChecked('Female')}
+                onPress={() => setUser({...form, ['gender']: 'female'})}
               />
             </View>
           </View>
@@ -68,15 +131,18 @@ export default function EditProfile() {
               placeholder={{label: 'Select Profession', value: null}}
               style={pickerSelectStyles}
               useNativeAndroidPickerStyle={false}
-              onValueChange={value => console.log(value)}
+              onValueChange={value => setForm({...form, ['profession']: value})}
               Icon={() => {
                 return <Icon name="down" size={24} color="#979797" />;
               }}
               items={[
-                {label: 'Football', value: 'football'},
-                {label: 'Baseball', value: 'baseball'},
-                {label: 'Hockey', value: 'hockey'},
+                {label: 'Accountant', value: 'Accountant'},
+                {label: 'Programmer', value: 'Programmer'},
+                {label: 'Architect', value: 'Architect'},
+                {label: 'Farmer', value: 'Farmer'},
+                {label: 'Journalist', value: 'Journalist'},
               ]}
+              value={form.profession}
             />
           </View>
 
@@ -88,15 +154,20 @@ export default function EditProfile() {
               placeholder={{label: 'Select Nationality', value: null}}
               style={pickerSelectStyles}
               useNativeAndroidPickerStyle={false}
-              onValueChange={value => console.log(value)}
+              onValueChange={value =>
+                setForm({...form, ['nationality']: value})
+              }
               Icon={() => {
                 return <Icon name="down" size={24} color="#979797" />;
               }}
               items={[
-                {label: 'Football', value: 'football'},
-                {label: 'Baseball', value: 'baseball'},
-                {label: 'Hockey', value: 'hockey'},
+                {label: 'Germany', value: 'Germany'},
+                {label: 'Japan', value: 'Japan'},
+                {label: 'Indonesia', value: 'Indonesia'},
+                {label: 'South Korea', value: 'South Korea'},
+                {label: 'China', value: 'China'},
               ]}
+              value={form.nationality}
             />
           </View>
 
@@ -105,16 +176,32 @@ export default function EditProfile() {
               Birthday Date
             </Text>
             <TouchableOpacity onPress={() => setOpen(true)}>
-              <InputAuth editable={false} placeholder={'DD/MM/YYYY'} />
+              {/* <InputAuth
+                // editable={false}
+                // placeholder={user.dateOfBirth ? user.dateOfBirth : 'DD/MM/YYYY'}
+                value={user.dateOfBirth ? user.dateOfBirth : 'DD/MM/YYYY'}
+              /> */}
+              <View className="border border-main-gray px-6 py-4 rounded-2xl text-sm tracking-medium font-poppins400 text-main-black mb-4">
+                <Text>
+                  {form.dateOfBirth
+                    ? moment(form.dateOfBirth).format('DD-MM-YYYY')
+                    : 'DD/MM/YYYY'}
+                </Text>
+              </View>
               <DatePicker
                 modal
                 open={open}
-                date={date}
+                date={
+                  form.dateOfBirth ? new Date(form.dateOfBirth) : new Date()
+                }
                 mode={'date'}
-                // eslint-disable-next-line no-shadow
-                onConfirm={date => {
+                onConfirm={data => {
                   setOpen(false);
-                  setDate(date);
+                  console.log(data);
+                  setForm({
+                    ...form,
+                    ['dateOfBirth']: moment(data).format('YYYY-MM-DD'),
+                  });
                 }}
                 onCancel={() => {
                   setOpen(false);
@@ -123,7 +210,7 @@ export default function EditProfile() {
             </TouchableOpacity>
           </View>
 
-          <ButtonAuth content={'Save'} />
+          <ButtonAuth content={'Save'} onPress={handleEditProfile} />
         </View>
       </View>
     </ScrollView>

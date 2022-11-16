@@ -7,6 +7,7 @@ export default function InputAuth({
   secureTextEntry = false,
   editable = true,
   handleChange,
+  value,
 }) {
   return (
     <TextInput
@@ -17,6 +18,7 @@ export default function InputAuth({
       autoCapitalize={'none'}
       editable={editable}
       onChangeText={handleChange}
+      defaultValue={value}
     />
   );
 }
