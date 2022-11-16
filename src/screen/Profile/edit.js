@@ -67,7 +67,12 @@ export default function EditProfile() {
     }
   };
 
+  const handleChangeForm = (name, value) => {
+    setForm({...form, [name]: value});
+  };
+
   const handleEditProfile = async () => {
+    // console.log(form);
     try {
       console.log(form);
       const result = await axios.patch(`user/${userId}`, form);
@@ -92,8 +97,16 @@ export default function EditProfile() {
         </View>
 
         <View className="mt-12">
-          <InputWithLabel label={'Name'} value={form.name} />
-          <InputWithLabel label={'Username'} value={form.username} />
+          <InputWithLabel
+            label={'Name'}
+            value={form.name}
+            handleChange={value => handleChangeForm('name', value)}
+          />
+          <InputWithLabel
+            label={'Username'}
+            value={form.username}
+            handleChange={value => handleChangeForm('username', value)}
+          />
 
           <InputWithLabel
             label={'Email'}
@@ -101,7 +114,11 @@ export default function EditProfile() {
             value={form.email}
             editable={false}
           />
-          <InputWithLabel label={'Phone'} value={form.phoneNumber} />
+          <InputWithLabel
+            label={'Phone'}
+            value={form.phoneNumber}
+            handleChange={value => handleChangeForm('phoneNumber', value)}
+          />
 
           <View className="mb-7">
             <Text className="text-main-black font-poppins400 tracking-medium text-sm mb-3">

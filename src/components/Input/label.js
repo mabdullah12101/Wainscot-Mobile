@@ -9,6 +9,7 @@ export default function InputWithLabel({
   secureTextEntry = false,
   value,
   editable,
+  handleChange,
 }) {
   return (
     <View className="mb-3">
@@ -21,6 +22,7 @@ export default function InputWithLabel({
         secureTextEntry={secureTextEntry}
         value={value}
         editable={editable}
+        handleChange={handleChange}
       />
     </View>
   );

@@ -17,6 +17,7 @@ export default function Profile({navigation}) {
       const data = await AsyncStorage.getItem('userId');
       const result = await axios.get(`user/${data}`);
       setUser(result.data.data[0]);
+      console.log(result.data.data[0]);
     } catch (error) {
       console.log(error);
     }
