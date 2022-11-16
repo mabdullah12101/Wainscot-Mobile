@@ -1,16 +1,35 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Attendees from '../../components/Detail/attendees';
 import IconContent from '../../components/Detail/iconcontent';
+import axios from '../../utils/axios';
+import moment from 'moment';
+import Config from 'react-native-config';
 
-export default function Detail({navigation}) {
+export default function Detail({navigation, route}) {
+  const eventId = route.params.eventId;
+  const [data, setData] = useState({});
+
   const navBack = () => {
     navigation.goBack();
   };
 
   const navOrder = () => {
     navigation.navigate('Order');
+  };
+
+  useEffect(() => {
+    getEventById();
+  }, []);
+
+  const getEventById = async () => {
+    try {
+      const result = await axios.get(`/event/${eventId}`);
+      setData(result.data.data[0]);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -26,7 +45,8 @@ export default function Detail({navigation}) {
       </View>
       <View className="w-full h-[490px] absolute">
         <Image
-          source={require('../../assets/img/event1.png')}
+          source={{uri: Config.CLOUDINARY_URL_IMAGE + data.image}}
+          // style={{width: 400, height: 400}}
           className="w-full h-full"
         />
       </View>
@@ -43,12 +63,15 @@ export default function Detail({navigation}) {
       <View className="mt-12">
         <View className="px-7">
           <Text className="font-poppins600 text-white tracking-large text-2xl max-w-xs leading-9 mb-3">
-            Sights & Sounds Exhibition
+            {data.name}
           </Text>
 
           <View>
-            <IconContent icon={'location'} content="Jakarta, Indonesia" />
-            <IconContent icon={'clock'} content="Wed, 15 Nov, 4:00 PM" />
+            <IconContent icon={'location'} content={data.location} />
+            <IconContent
+              icon={'clock'}
+              content={moment(data.dateTimeShow).format('ddd, DD MMM, hh A')}
+            />
           </View>
 
           <View className="mt-6">
@@ -71,8 +94,7 @@ export default function Detail({navigation}) {
               Event Detail
             </Text>
             <Text className="font-poppins400 text-xs tracking-medium text-main-gray max-w-xs mt-4">
-              After his controversial art exhibition "Tear and Consume" back in
-              November 2018, in which guests were invited to tear up…
+              {data.detail}
             </Text>
           </View>
 
@@ -93,5 +115,3 @@ export default function Detail({navigation}) {
     </ScrollView>
   );
 }
-
-// const style = StyleSheet.create({});

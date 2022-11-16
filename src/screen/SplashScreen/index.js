@@ -1,13 +1,14 @@
 import React, {useEffect} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Text, View} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SplashScreen(props) {
-  const token = false;
   useEffect(() => {
     checkToken();
   }, []);
 
-  const checkToken = () => {
+  const checkToken = async () => {
+    const token = await AsyncStorage.getItem('token');
     setTimeout(() => {
       if (token) {
         props.navigation.replace('AppScreen');
@@ -23,5 +24,3 @@ export default function SplashScreen(props) {
     </View>
   );
 }
-
-const style = StyleSheet.create({});

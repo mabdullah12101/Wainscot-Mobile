@@ -1,16 +1,37 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import ButtonAuth from '../../components/Button/auth';
 import InputAuth from '../../components/Input/auth';
+import axios from '../../utils/axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // import Icon from 'react-native-vector-icons/AntDesign';
 
 export default function Signin(props) {
-  const handleLogin = () => {
-    props.navigation.replace('AppScreen', {screen: 'MenuNavigator'});
+  const [form, setForm] = useState({});
+
+  const handleLogin = async () => {
+    try {
+      // props.navigation.replace('AppScreen', {screen: 'MenuNavigator'});
+      const result = await axios.post('auth/login', form);
+      await AsyncStorage.setItem('userId', result.data.data[0].userId);
+      await AsyncStorage.setItem('token', result.data.data[0].token);
+      await AsyncStorage.setItem(
+        'refreshToken',
+        result.data.data[0].refreshToken,
+      );
+      alert(result.data.message);
+      props.navigation.replace('AppScreen', {screen: 'MenuNavigator'});
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const navSignup = () => {
     props.navigation.navigate('Signup');
+  };
+
+  const handleChangeForm = (name, value) => {
+    setForm({...form, [name]: value});
   };
 
   return (
@@ -30,9 +51,16 @@ export default function Signin(props) {
         </TouchableOpacity>
       </View>
 
-      <InputAuth placeholder={'Username'} />
-      <InputAuth placeholder={'Email'} keyboardType="email-address" />
-      <InputAuth placeholder={'Password'} secureTextEntry={true} />
+      <InputAuth
+        placeholder={'Email'}
+        keyboardType="email-address"
+        handleChange={value => handleChangeForm('email', value)}
+      />
+      <InputAuth
+        placeholder={'Password'}
+        secureTextEntry={true}
+        handleChange={value => handleChangeForm('password', value)}
+      />
 
       <TouchableOpacity className="items-end mt-6 mb-6">
         <Text className="font-poppins600 text-main-blue text-xs tracking-small">

@@ -1,5 +1,5 @@
-import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, Image} from 'react-native';
 import {
   DrawerContentScrollView,
   DrawerItem,
@@ -9,8 +9,26 @@ import {
 import Icon from 'react-native-vector-icons/Feather';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from '../../utils/axios';
+import Config from 'react-native-config';
 
 function DrawerContent(props) {
+  const [user, setUser] = useState({});
+
+  useEffect(() => {
+    getUserById();
+  }, []);
+
+  const getUserById = async () => {
+    try {
+      const data = await AsyncStorage.getItem('userId');
+      const result = await axios.get(`user/${data}`);
+      setUser(result.data.data[0]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleLogout = async () => {
     try {
       alert('Logout');
@@ -24,10 +42,27 @@ function DrawerContent(props) {
     <View style={styles.container}>
       <DrawerContentScrollView {...props}>
         <View style={styles.containerProfile}>
-          <View style={styles.avatar} />
+          <Image
+            source={{
+              uri: user.image
+                ? Config.CLOUDINARY_URL_IMAGE + user.image
+                : Config.CLOUDINARY_DEFAULT_IMAGE,
+            }}
+            style={styles.avatar}
+          />
+          {/* <Image
+            source={{
+              uri: user.image
+                ? Config.CLOUDINARY_URL_IMAGE + user.image
+                : Config.CLOUDINARY_DEFAULT_IMAGE,
+            }}
+            style={styles.avatar}
+          /> */}
           <View style={styles.biodata}>
-            <Text style={styles.title}>Anonymous</Text>
-            <Text style={styles.caption}>@bagustea</Text>
+            <Text style={styles.title}>{user.name}</Text>
+            <Text style={styles.caption}>
+              {user.profession ? user.profession : 'Profession Not Set'}
+            </Text>
           </View>
         </View>
         <DrawerItemList {...props} />
@@ -58,7 +93,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 40,
-    backgroundColor: 'gray',
+    // backgroundColor: 'gray',
   },
   biodata: {
     marginLeft: 15,
