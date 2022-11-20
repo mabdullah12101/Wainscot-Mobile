@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {
   FlatList,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -19,10 +20,10 @@ export default function Home(props) {
   const navDetail = eventId =>
     props.navigation.navigate('Detail', {eventId: eventId});
 
-  useEffect(() => {
-    checkStorage();
-    getAllData();
-  }, []);
+  // useEffect(() => {
+  //   checkStorage();
+  //   getAllData();
+  // }, []);
 
   const getAllData = async () => {
     try {
@@ -67,14 +68,34 @@ export default function Home(props) {
             </TouchableOpacity>
           </View>
 
-          <FlatList
+          {/* <FlatList
             horizontal={true}
             data={allEvents}
             renderItem={({item}) => (
               <CardEvent data={item} onPress={() => navDetail(item.eventId)} />
             )}
             keyExtractor={item => item.eventId}
-          />
+          /> */}
+
+          <View className="w-[260px] h-[376px] rounded-[40px] overflow-hidden relative">
+            <Image
+              source={require('../../assets/img/event1.png')}
+              className="w-full absolute"
+            />
+            <View className="px-6 pb-6 mt-auto">
+              <Text className="font-poppins500 text-sm text-white tracking-medium">
+                Wed, 15 Nov, 4:00 PM
+              </Text>
+              <Text className="text-white font-poppins600 text-xl tracking-large mt-1 mb-5">
+                Sights & Sounds Exhibition
+              </Text>
+              <TouchableOpacity
+                className="bg-[#FC1055] w-11 h-11 rounded-lg justify-center items-center"
+                onPress={navDetail}>
+                <Icon name="arrow-right" size={24} color="#FFFFFF" />
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
         {/* <Image
           source={{uri: 'https://reactjs.org/logo-og.png'}}

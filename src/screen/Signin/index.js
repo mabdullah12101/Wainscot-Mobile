@@ -4,34 +4,73 @@ import ButtonAuth from '../../components/Button/auth';
 import InputAuth from '../../components/Input/auth';
 import axios from '../../utils/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch, useSelector} from 'react-redux';
+import {getDataUserById} from '../../stores/actions/user';
+import {login} from '../../stores/actions/auth';
+
 // import Icon from 'react-native-vector-icons/AntDesign';
 
 export default function Signin(props) {
-  const [form, setForm] = useState({});
+  const dispatch = useDispatch();
+  const auth = useSelector(state => state.auth);
 
-  const handleLogin = async () => {
-    try {
-      // props.navigation.replace('AppScreen', {screen: 'MenuNavigator'});
-      const result = await axios.post('auth/login', form);
-      await AsyncStorage.setItem('userId', result.data.data[0].userId);
-      await AsyncStorage.setItem('token', result.data.data[0].token);
-      await AsyncStorage.setItem(
-        'refreshToken',
-        result.data.data[0].refreshToken,
-      );
-      alert(result.data.message);
-      props.navigation.replace('AppScreen', {screen: 'MenuNavigator'});
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const navSignup = () => {
-    props.navigation.navigate('Signup');
-  };
+  const [form, setForm] = useState({
+    email: '',
+    password: '',
+  });
 
   const handleChangeForm = (name, value) => {
     setForm({...form, [name]: value});
+  };
+
+  const handleLogin = async () => {
+    console.log(form);
+    dispatch(login(form))
+      .then(() => {
+        dispatch(getDataUserById(auth.data[0].userId));
+        AsyncStorage.setItem('token', auth.data[0].token);
+        AsyncStorage.setItem('refreshToken', auth.data[0].refreshToken);
+        alert(auth.message);
+        props.navigation.replace('AppScreen', {screen: 'MenuNavigator'});
+      })
+      .catch(() => {
+        alert(auth.message);
+      });
+
+    // if (!auth.isError) {
+    //   dispatch(getDataUserById(auth.data[0].userId));
+    //   AsyncStorage.setItem('token', auth.data[0].token);
+    //   AsyncStorage.setItem('refreshToken', auth.data[0].refreshToken);
+    //   alert(auth.data.message);
+    //   props.navigation.replace('AppScreen', {screen: 'MenuNavigator'});
+    // } else {
+    //   alert(auth.data.message);
+    // }
+  };
+
+  // const handleLogin = async () => {
+  //   try {
+  //     // props.navigation.replace('AppScreen', {screen: 'MenuNavigator'});
+  //     const result = await axios.post('auth/login', form);
+  //     await AsyncStorage.setItem('userId', result.data.data[0].userId);
+  //     await AsyncStorage.setItem('token', result.data.data[0].token);
+  //     await AsyncStorage.setItem(
+  //       'refreshToken',
+  //       result.data.data[0].refreshToken,
+  //     );
+  //     alert(result.data.message);
+  //     props.navigation.replace('AppScreen', {screen: 'MenuNavigator'});
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  // const handleLogin = () => {
+  //   props.navigation.replace('AppScreen', {screen: 'MenuNavigator'});
+  // };
+
+  const navSignup = () => {
+    props.navigation.navigate('Signup');
   };
 
   return (
