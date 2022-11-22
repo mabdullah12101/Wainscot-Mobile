@@ -6,15 +6,19 @@ import stores from './src/stores';
 const {store, persistor} = stores;
 
 import {PersistGate} from 'redux-persist/integration/react';
+import Toast from 'react-native-toast-message';
 
 export default function App() {
   return (
-    <StoreProvider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <PaperProvider>
-          <MainStackNavigator />
-        </PaperProvider>
-      </PersistGate>
-    </StoreProvider>
+    <>
+      <StoreProvider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <PaperProvider>
+            <MainStackNavigator />
+          </PaperProvider>
+        </PersistGate>
+      </StoreProvider>
+      <Toast />
+    </>
   );
 }

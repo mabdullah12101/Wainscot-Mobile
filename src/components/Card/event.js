@@ -4,9 +4,12 @@ import Icon from 'react-native-vector-icons/Feather';
 import moment from 'moment';
 import Config from 'react-native-config';
 
-export default function CardEvent({onPress, data}) {
+export default function CardEvent({onPress, data, seeAll}) {
   return (
-    <View className="w-[260px] h-[376px] rounded-[40px] overflow-hidden relative mr-5">
+    <View
+      className={`w-full h-full ${
+        seeAll ? 'rounded-xl' : 'rounded-[40px]'
+      } overflow-hidden relative mr-5`}>
       <Image
         source={{uri: Config.CLOUDINARY_URL_IMAGE + data.image}}
         // style={{width: 400, height: 400}}
@@ -19,10 +22,16 @@ export default function CardEvent({onPress, data}) {
 
       /> */}
       <View className="px-6 pb-6 mt-auto">
-        <Text className="font-poppins500 text-sm text-white tracking-medium">
+        <Text
+          className={`font-poppins500 ${
+            seeAll ? 'text-xs' : 'text-sm'
+          }  text-white tracking-medium`}>
           {moment(data.dateTimeShow).format('ddd, DD MMM, hh A')}
         </Text>
-        <Text className="text-white font-poppins600 text-xl tracking-large mt-1 mb-5">
+        <Text
+          className={`text-white font-poppins600 ${
+            seeAll ? 'text-lg' : 'text-xl'
+          }  tracking-large mt-1 mb-5`}>
           {data.name}
         </Text>
         <TouchableOpacity

@@ -1,14 +1,17 @@
 import React from 'react';
-import {Text, TouchableOpacity} from 'react-native';
+import {Pressable, Text, TouchableOpacity} from 'react-native';
 
-export default function ButtonAuth({onPress, content}) {
+export default function ButtonAuth({onPress, content, isLoading}) {
   return (
-    <TouchableOpacity
-      className="bg-main-blue items-center py-4 rounded-2xl shadow-lg shadow-blue-400"
-      onPress={onPress}>
+    <Pressable
+      className={`bg-main-blue items-center justify-center h-14 rounded-2xl shadow-lg shadow-blue-400 ${
+        isLoading ? 'opacity-50' : ''
+      }`}
+      onPress={onPress}
+      disabled={isLoading ? true : false}>
       <Text className="font-poppins600 text-white tracking-medium">
         {content}
       </Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 }

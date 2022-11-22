@@ -4,24 +4,25 @@ import {Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import axios from '../../utils/axios';
 import Config from 'react-native-config';
+import {useSelector} from 'react-redux';
 
 export default function Profile({navigation}) {
-  const [user, setUser] = useState({});
+  const user = useSelector(state => state.user.data);
 
-  useEffect(() => {
-    getUserById();
-  }, []);
+  // useEffect(() => {
+  //   getUserById();
+  // }, []);
 
-  const getUserById = async () => {
-    try {
-      const data = await AsyncStorage.getItem('userId');
-      const result = await axios.get(`user/${data}`);
-      setUser(result.data.data[0]);
-      console.log(result.data.data[0]);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getUserById = async () => {
+  //   try {
+  //     const data = await AsyncStorage.getItem('userId');
+  //     const result = await axios.get(`user/${data}`);
+  //     setUser(result.data.data[0]);
+  //     console.log(result.data.data[0]);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const navEditProfile = () => navigation.navigate('Edit Profile');
 

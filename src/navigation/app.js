@@ -15,6 +15,7 @@ import HeaderHome from '../components/Header/home';
 import Order from '../screen/Order';
 import HeaderDefault from '../components/Header/default';
 import EditProfile from '../screen/Profile/edit';
+import AllEvent from '../screen/AllEvent';
 
 function MenuNavigator() {
   // DAFTARKAN MENU YANG NANTINYA AKAN MASUK KE DALAM DRAWER DISINI
@@ -60,6 +61,19 @@ export default function AppStackNavigator() {
         name="MenuNavigator"
         component={MenuNavigator}
         options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="AllEvent"
+        component={AllEvent}
+        options={{
+          header: props => (
+            <HeaderDefault
+              {...props}
+              name="List Event"
+              variant={'bg-main-blue'}
+            />
+          ),
+        }}
       />
       <Stack.Screen
         name="Detail"

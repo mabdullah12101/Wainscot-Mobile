@@ -18,22 +18,26 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from '../../utils/axios';
 import Config from 'react-native-config';
 import moment from 'moment';
+import {useDispatch, useSelector} from 'react-redux';
+import {getDataUserById, updateProfileUser} from '../../stores/actions/user';
 
 export default function EditProfile() {
   // const [date, setDate] = useState(new Date());
-  const [userId, setUserId] = useState('');
+  const dispatch = useDispatch();
+  // const [userId, setUserId] = useState('');
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState({});
+  // const [user, setUser] = useState({});
+  const user = useSelector(state => state.user);
 
   const [form, setForm] = useState({
-    name: '',
-    username: '',
-    email: '',
-    phoneNumber: '',
-    gender: '',
-    profession: '',
-    nationality: '',
-    dateOfBirth: '',
+    name: user.data.name,
+    username: user.data.username,
+    email: user.data.email,
+    phoneNumber: user.data.phoneNumber,
+    gender: user.data.gender,
+    profession: user.data.profession,
+    nationality: user.data.nationality,
+    dateOfBirth: user.data.dateOfBirth,
   });
 
   // console.log(moment(date).format('DD-MM-YYYY'));
@@ -41,45 +45,51 @@ export default function EditProfile() {
   console.log(new Date(user.dateOfBirth));
   console.log(form);
 
-  useEffect(() => {
-    getUserById();
-  }, []);
+  // useEffect(() => {
+  //   getUserById();
+  // }, []);
 
-  const getUserById = async () => {
-    try {
-      const data = await AsyncStorage.getItem('userId');
-      setUserId(data);
-      const result = await axios.get(`user/${data}`);
-      const resultData = result.data.data[0];
-      setUser(resultData);
-      setForm({
-        name: resultData.name,
-        username: resultData.username,
-        email: resultData.email,
-        phoneNumber: resultData.phoneNumber,
-        gender: resultData.gender,
-        profession: resultData.profession,
-        nationality: resultData.nationality,
-        dateOfBirth: resultData.dateOfBirth,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getUserById = async () => {
+  //   try {
+  //     const data = await AsyncStorage.getItem('userId');
+  //     setUserId(data);
+  //     const result = await axios.get(`user/${data}`);
+  //     const resultData = result.data.data[0];
+  //     setUser(resultData);
+  //     setForm({
+  //       name: resultData.name,
+  //       username: resultData.username,
+  //       email: resultData.email,
+  //       phoneNumber: resultData.phoneNumber,
+  //       gender: resultData.gender,
+  //       profession: resultData.profession,
+  //       nationality: resultData.nationality,
+  //       dateOfBirth: resultData.dateOfBirth,
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const handleChangeForm = (name, value) => {
     setForm({...form, [name]: value});
   };
 
-  const handleEditProfile = async () => {
+  const handleEditProfile = () => {
+    dispatch(updateProfileUser(user.data.userId, form)).then(() => {
+      dispatch(getDataUserById(user.data.userId));
+
+      alert('sucess');
+    });
     // console.log(form);
-    try {
-      console.log(form);
-      const result = await axios.patch(`user/${userId}`, form);
-      alert(result.data.message);
-    } catch (error) {
-      console.log(error);
-    }
+    // try {
+    //   console.log(form);
+    //   const result = await axios.patch(`user/${userId}`, form);
+
+    //   alert(result.data.message);
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   return (
@@ -135,7 +145,7 @@ export default function EditProfile() {
               <InputRadio
                 checked={form.gender}
                 content="Female"
-                onPress={() => setUser({...form, ['gender']: 'female'})}
+                onPress={() => setForm({...form, ['gender']: 'female'})}
               />
             </View>
           </View>

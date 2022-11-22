@@ -11,23 +11,25 @@ import Icon from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from '../../utils/axios';
 import Config from 'react-native-config';
+import {useSelector} from 'react-redux';
 
 function DrawerContent(props) {
-  const [user, setUser] = useState({});
+  // const [user, setUser] = useState({});
+  const user = useSelector(state => state.user.data);
 
-  useEffect(() => {
-    getUserById();
-  }, []);
+  // useEffect(() => {
+  //   getUserById();
+  // }, []);
 
-  const getUserById = async () => {
-    try {
-      const data = await AsyncStorage.getItem('userId');
-      const result = await axios.get(`user/${data}`);
-      setUser(result.data.data[0]);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getUserById = async () => {
+  //   try {
+  //     const data = await AsyncStorage.getItem('userId');
+  //     const result = await axios.get(`user/${data}`);
+  //     setUser(result.data.data[0]);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const handleLogout = async () => {
     try {

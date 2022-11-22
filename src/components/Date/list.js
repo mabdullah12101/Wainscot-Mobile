@@ -2,9 +2,10 @@ import React from 'react';
 import {Text, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/Octicons';
 
-export default function ListDate({active, date, day}) {
+export default function ListDate({active, date, day, onPress}) {
   return (
     <TouchableOpacity
+      onPress={onPress}
       className={`${
         active ? 'border border-[#FF8900]' : ''
       } px-3 pt-4 pb-2 rounded-2xl gap-y-1 items-center`}>

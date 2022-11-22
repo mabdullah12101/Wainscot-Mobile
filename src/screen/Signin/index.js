@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import ButtonAuth from '../../components/Button/auth';
 import InputAuth from '../../components/Input/auth';
 import axios from '../../utils/axios';
@@ -7,6 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {getDataUserById} from '../../stores/actions/user';
 import {login} from '../../stores/actions/auth';
+import Toast from 'react-native-toast-message';
 
 // import Icon from 'react-native-vector-icons/AntDesign';
 
@@ -24,17 +32,18 @@ export default function Signin(props) {
   };
 
   const handleLogin = async () => {
-    console.log(form);
-    dispatch(login(form))
-      .then(() => {
-        dispatch(getDataUserById(auth.data[0].userId));
-        AsyncStorage.setItem('token', auth.data[0].token);
-        AsyncStorage.setItem('refreshToken', auth.data[0].refreshToken);
-        alert(auth.message);
+    await dispatch(login(form))
+      .then(res => {
+        const result = res.action.payload.data;
+        const resultData = result.data[0];
+        dispatch(getDataUserById(resultData.userId));
+        AsyncStorage.setItem('token', resultData.token);
+        AsyncStorage.setItem('refreshToken', resultData.refreshToken);
+        Toast.show({type: 'success', text1: 'Success', text2: result.message});
         props.navigation.replace('AppScreen', {screen: 'MenuNavigator'});
       })
       .catch(() => {
-        alert(auth.message);
+        Toast.show({type: 'error', text1: 'Failed', text2: 'Login Failed'});
       });
 
     // if (!auth.isError) {
@@ -107,7 +116,13 @@ export default function Signin(props) {
         </Text>
       </TouchableOpacity>
 
-      <ButtonAuth content={'Login'} onPress={handleLogin} />
+      <ButtonAuth
+        content={
+          auth.isLoading ? <ActivityIndicator color={'#FFFFFF'} /> : 'Login'
+        }
+        isLoading={auth.isLoading}
+        onPress={handleLogin}
+      />
     </ScrollView>
   );
 }
