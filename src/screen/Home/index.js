@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
-  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,7 +13,6 @@ import ListDate from '../../components/Date/list';
 import Icon from 'react-native-vector-icons/Feather';
 import axios from '../../utils/axios';
 import CardEvent from '../../components/Card/event';
-// import checkStorage from '../../utils/checkAsyncStorage';
 import moment from 'moment';
 
 export default function Home(props) {
@@ -28,11 +26,6 @@ export default function Home(props) {
   console.log(search);
   const navDetail = eventId =>
     props.navigation.navigate('Detail', {eventId: eventId});
-
-  // useEffect(() => {
-  //   checkStorage();
-  //   getAllData();
-  // }, []);
 
   useEffect(() => {
     getAllData();
@@ -68,10 +61,6 @@ export default function Home(props) {
     setListDate(list);
   };
 
-  // const selectDate = date => {
-  //   useNavigateSearch({searchDateTimeShow: date, page: 1});
-  // };
-
   return (
     <ScrollView style={styles.container} className="bg-main-blue">
       <View className="mx-7 relative my-6">
@@ -103,8 +92,6 @@ export default function Home(props) {
             </View>
           ))}
         </View>
-
-        {/* <FlatList data={listDate} renderItem={item => <Text>{item}</Text>} /> */}
 
         <View className="bg-[#FCFCFC] flex-1 rounded-t-[40px] px-7 py-9">
           <View className="flex-row justify-between items-center mb-8">
@@ -150,31 +137,7 @@ export default function Home(props) {
               )}
             </>
           )}
-
-          {/* <View className="w-[260px] h-[376px] rounded-[40px] overflow-hidden relative">
-            <Image
-              source={require('../../assets/img/event1.png')}
-              className="w-full absolute"
-            />
-            <View className="px-6 pb-6 mt-auto">
-              <Text className="font-poppins500 text-sm text-white tracking-medium">
-                Wed, 15 Nov, 4:00 PM
-              </Text>
-              <Text className="text-white font-poppins600 text-xl tracking-large mt-1 mb-5">
-                Sights & Sounds Exhibition
-              </Text>
-              <TouchableOpacity
-                className="bg-[#FC1055] w-11 h-11 rounded-lg justify-center items-center"
-                onPress={navDetail}>
-                <Icon name="arrow-right" size={24} color="#FFFFFF" />
-              </TouchableOpacity>
-            </View>
-          </View> */}
         </View>
-        {/* <Image
-          source={{uri: 'https://reactjs.org/logo-og.png'}}
-          style={{width: 400, height: 400}}
-        /> */}
       </View>
     </ScrollView>
   );
@@ -183,10 +146,8 @@ export default function Home(props) {
 const styles = StyleSheet.create({
   container: {flex: 1},
   sortDateContainer: {
-    // backgroundColor: '#222B45',
     width: '100%',
     flexDirection: 'row',
-    // padding: 20,
     alignItems: 'center',
     justifyContent: 'space-between',
     borderTopLeftRadius: 30,
