@@ -1,135 +1,326 @@
 import React, {useEffect, useState} from 'react';
-import {Image, Text, View} from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import axios from '../../utils/axios';
+import Icon from 'react-native-vector-icons/AntDesign';
+import {useSelector} from 'react-redux';
 
-export default function Order() {
+export default function Order({route, navigation}) {
+  const userId = useSelector(state => state.user.data.userId);
   const [listBooking, setListBooking] = useState([]);
+  const [dataEvent, setDataEvent] = useState([]);
+  const [dataOrder, setDataOrder] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [section, setSection] = useState([]);
+  const [loadingBooking, setLoadingBooking] = useState(false);
+  const [loadingEvent, setLoadingEvent] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const eventId = route.params.eventId;
 
   useEffect(() => {
-    getDataBooking();
+    getDataEvent();
   }, []);
 
-  const getDataBooking = () => {
-    // https://www.notion.so/Modul-Booking-293a2b5a8f2b4d09a8e1f25304592c22
-    const DATADUMMY = {
-      status: 200,
-      message: 'Success Get Data Section By Event Id',
-      data: [
+  useEffect(() => {
+    getTotalPayment();
+    getSection();
+  }, [dataOrder]);
+
+  useEffect(() => {
+    listBooking.map(item => {
+      // console.log(data);
+      dataOrder.push({
+        available: item.available,
+        seat: item.section,
+        qty: 0,
+        price: 0,
+      });
+    });
+  }, [listBooking]);
+
+  const getDataBooking = async () => {
+    try {
+      setLoadingBooking(true);
+      const dataBooking = await axios.get(`/booking/section/${eventId}`);
+      const seat = [
         {
-          section: 'REG1-1',
-          booked: 30,
-          available: 0,
-          statusFull: true,
+          type: 'VVIP',
+          section: 1,
         },
-        {
-          section: 'REG1-2',
-          booked: 15,
-          available: 15,
-          statusFull: false,
-        },
-        {
-          section: 'REG1-3',
-          booked: 0,
-          available: 30,
-          statusFull: false,
-        },
-        {
-          section: 'REG1-4',
-          booked: 30,
-          available: 0,
-          statusFull: true,
-        },
-        {
-          section: 'VVIP1-1',
-          booked: 5,
-          available: 5,
-          statusFull: false,
-        },
-      ],
-    };
-    const seat = [
-      {
-        type: 'VVIP',
-        section: 1,
-      },
-      {type: 'VIP', section: 7},
-      {type: 'REG', section: 9},
-    ];
-    const result = seat.map(item => {
-      let data = []; // VVIP, VIP, REG
-      for (let i = 1; i <= 4; i++) {
-        // DIGUNAKAN UNTUK MENCARI DATA TIAP BAGIAN
-        for (let j = 1; j <= item.section; j++) {
-          // DIGUNAKAN UNTUK MENCARI DATA TIAP SECTION
-          const filterSeat = DATADUMMY.data.filter(
-            dataSeat => dataSeat.section === `${item.type}${i}-${j}`, // VVIP1-1 === VVIP1-1
-          );
-          // filterSeat = [{
-          //   section: 'VVIP1-1',
-          //   booked: 5,
-          //   available: 5,
-          //   statusFull: false,
-          // }]
-          const checkData = data.filter(
-            dataAvailable => dataAvailable.type === item.type,
-          ); // DIGUNAKAN UNTUK MENCARI TAU APAKAH TYPE SUDAH MASUK KE DALAM VARIABEL DATA ?
-          // checkData = []
-          if (checkData.length < 1) {
-            // pengecekan data
-            if (filterSeat.length < 1) {
-              // JIKA DATA BELUM MASUK KEDALAM DATA BOOKING
-              data.push({
-                type: item.type,
-                section: `${item.type}${i}-${j}`,
-                available: item.type.includes('VVIP')
-                  ? 10
-                  : item.type.includes('VIP')
-                  ? 20
-                  : 30,
-              });
-            }
-            if (filterSeat.length > 0 && !filterSeat[0]?.statusFull) {
-              // JIKA DATA SUDAH MASUK KEDALAM DATA BOOKING
-              data.push({
-                type: filterSeat[0].section.includes('VVIP')
-                  ? 'VVIP'
-                  : item.type.includes('VIP')
-                  ? 'VIP'
-                  : 'REG',
-                section: filterSeat[0].section,
-                available: filterSeat[0].available,
-              });
+        {type: 'VIP', section: 7},
+        {type: 'REG', section: 9},
+      ];
+      const result = seat.map(item => {
+        let data = [];
+        for (let i = 1; i <= 4; i++) {
+          for (let j = 1; j <= item.section; j++) {
+            const filterSeat = dataBooking.data.data.filter(
+              dataSeat => dataSeat.section === `${item.type}${i}-${j}`,
+            );
+            const checkData = data.filter(
+              dataAvailable => dataAvailable.type === item.type,
+            );
+            if (checkData.length < 1) {
+              if (filterSeat.length < 1) {
+                data.push({
+                  type: item.type,
+                  section: `${item.type}${i}-${j}`,
+                  available: item.type.includes('VVIP')
+                    ? 10
+                    : item.type.includes('VIP')
+                    ? 20
+                    : 30,
+                });
+              }
+              if (filterSeat.length > 0 && !filterSeat[0]?.statusFull) {
+                data.push({
+                  type: filterSeat[0].section.includes('VVIP')
+                    ? 'VVIP'
+                    : item.type.includes('VIP')
+                    ? 'VIP'
+                    : 'REG',
+                  section: filterSeat[0].section,
+                  available: filterSeat[0].available,
+                });
+              }
             }
           }
         }
-      }
-      return data;
+        return data;
+      });
+      const newResult = result.map(item => item[0]);
+      setListBooking(newResult);
+      setLoadingBooking(false);
+    } catch (error) {
+      console.log(error);
+      setLoadingBooking(false);
+    }
+  };
+
+  const getDataEvent = async () => {
+    try {
+      setLoadingEvent(true);
+      const result = await axios.get(`/event/${eventId}`);
+      setDataEvent(result.data.data);
+      getDataBooking();
+      setLoadingEvent(false);
+    } catch (error) {
+      console.log(error);
+      setLoadingEvent(false);
+    }
+  };
+
+  const increaseOrderSeat = data => {
+    const findData = dataOrder.find(item => item.seat === data.seat);
+
+    if (findData.qty < data.available) {
+      const price = data.seat.includes('VVIP')
+        ? dataEvent[0].price * 3 // HARGA 3 KALI LIPAT UNTUK VVIP
+        : data.seat.includes('VIP')
+        ? dataEvent[0].price * 2 // HARGA 2 KALI LIPAT UNTUK VIP
+        : dataEvent[0].price; // HARGA TIDAK BERUBAH UNTUK REGULAR
+      findData.qty += 1;
+      findData.price = price * findData.qty;
+      setDataOrder([...dataOrder]);
+    }
+  };
+
+  const decreaseOrderSeat = data => {
+    const findData = dataOrder.find(item => item.seat === data.seat);
+    if (findData.qty > 0) {
+      const price = data.seat.includes('VVIP')
+        ? dataEvent[0].price * 3 // HARGA 3 KALI LIPAT UNTUK VVIP
+        : data.seat.includes('VIP')
+        ? dataEvent[0].price * 2 // HARGA 2 KALI LIPAT UNTUK VIP
+        : dataEvent[0].price; // HARGA TIDAK BERUBAH UNTUK REGULAR
+      findData.qty -= 1;
+      findData.price = price * findData.qty;
+      setDataOrder([...dataOrder]);
+    }
+  };
+
+  const getTotalPayment = () => {
+    let totalPayment = 0;
+    dataOrder.map(item => {
+      totalPayment = totalPayment + item.price;
     });
-    // result = [[{type: "REG",section: "REG1-1", available: 30}], [{type: "VIP",section: "VIP1-1", available: 20}], [{type: "VVIP",section: "VVIP1-1", available: 5}]]
-    const newResult = result.map(item => item[0]);
-    // newResult = [
-    //   {type: 'REG', section: 'REG1-1', available: 30},
-    //   {type: 'VIP', section: 'VIP1-1', available: 20},
-    //   {type: 'VVIP', section: 'VVIP1-1', available: 5},
-    // ];
-    setListBooking(newResult);
+    setTotalPrice(totalPayment);
+  };
+
+  const getSection = () => {
+    const tempSection = [];
+    dataOrder.map(item => {
+      for (let i = 0; i < item.qty; i++) {
+        tempSection.push(item.seat);
+      }
+    });
+    setSection(tempSection);
+  };
+
+  const createBooking = () => {
+    setLoading(true);
+    const data = {
+      userId: userId,
+      eventId: eventId,
+      totalTicket: section.length,
+      totalPayment: totalPrice,
+      section: section,
+    };
+
+    axios
+      .post('/booking', data)
+      .then(res => {
+        console.log(res.data.data.redirect_url);
+        setLoading(false);
+        navigation.navigate('Payment', {url: res.data.data.redirect_url});
+      })
+      .catch(err => {
+        console.log(err);
+        setLoading(false);
+      });
   };
 
   return (
-    <View className="bg-main-blue flex-1">
-      <View className="bg-white mt-1 flex-1 rounded-t-[40px] pt-8">
+    <ScrollView className="bg-main-blue flex-1">
+      <View className="bg-white mt-1 flex-1 rounded-t-[40px] py-8">
         <View className="w-full items-center">
           <Image source={require('../../assets/img/order.png')} />
         </View>
 
-        <View className="px-7">
-          <View className="flex-row justify-between items-center">
-            <Text className="font-poppins600 text-main-black tracking-medium text-xl">
+        {loadingEvent || loadingBooking ? (
+          <View className="h-96 justify-center items-center">
+            <ActivityIndicator size={'large'} color="blue" />
+          </View>
+        ) : (
+          <View className="px-7">
+            <Text className="font-poppins600 text-main-black tracking-medium text-xl mt-10">
               Tickets
             </Text>
-            <Text className="font-poppins600 text-main-black tracking-medium text-xl">By Price</Text>
+
+            <FlatList
+              data={dataOrder}
+              renderItem={({item}) => (
+                <View>
+                  <View className="flex-row items-center justify-between mt-8">
+                    <View className="flex-row items-center">
+                      <View className="w-12 h-12 rounded-lg bg-[#F1EAFF] justify-center items-center mr-3">
+                        <Image
+                          source={
+                            item.seat.split('-')[0].includes('VVIP')
+                              ? require('../../assets/img/vvip.png')
+                              : item.seat.split('-')[0].includes('VIP')
+                              ? require('../../assets/img/vip.png')
+                              : require('../../assets/img/reg.png')
+                          }
+                        />
+                      </View>
+                      <View>
+                        <Text className="font-poppins600 text-sm text-main-black tracking-medium">
+                          SECTION {item.seat.split('-')[0]}, ROW{' '}
+                          {item.seat.split('-')[1]}
+                        </Text>
+                        <Text className="font-poppins500 text-xs text-[#BDC0C4] mt-1">
+                          {item.available} Seats available
+                        </Text>
+                      </View>
+                    </View>
+                    <View className="items-center">
+                      <Text className="font-poppins600 text-base text-main-black tracking-medium">
+                        {item.price}
+                      </Text>
+                      <Text className="font-poppins500 text-xs text-[#BDC0C4] mt-1 tracking-small">
+                        per person
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View className="ml-16 flex-row items-center justify-between mt-4">
+                    <Text className="font-poppins600 text-xs tracking-medium text-main-black">
+                      Quantity
+                    </Text>
+                    <View className="flex-row gap-x-5">
+                      <TouchableOpacity
+                        className="w-8 h-7 border border-main-gray rounded-lg justify-center items-center"
+                        onPress={() => decreaseOrderSeat(item)}>
+                        <Icon name="minus" size={10} color="#C1C5D0" />
+                      </TouchableOpacity>
+
+                      <Text>{item.qty}</Text>
+
+                      <TouchableOpacity
+                        className="w-8 h-7 border border-main-gray rounded-lg justify-center items-center"
+                        onPress={() => increaseOrderSeat(item)}>
+                        <Icon name="plus" size={10} color="#C1C5D0" />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              )}
+            />
+
+            <View className="mt-12">
+              <View className="flex-row mb-4">
+                <Text className="basis-1/2 font-poppins600 text-sm text-main-black tracking-small">
+                  Ticket Section
+                </Text>
+                <View className="basis-1/2 items-end">
+                  <Text className="font-poppins600 text-sm text-main-blue tracking-small">
+                    {dataOrder.filter(item => item.qty > 0).length > 0
+                      ? dataOrder
+                          .filter(item => item.qty > 0)
+                          .map(item => item.seat + ' ')
+                      : 'None'}
+                  </Text>
+                </View>
+              </View>
+
+              <View className="flex-row mb-4">
+                <Text className="basis-1/2 font-poppins600 text-sm text-main-black tracking-small">
+                  Quantity
+                </Text>
+                <View className="basis-1/2 items-end">
+                  <Text className="font-poppins600 text-sm text-main-blue tracking-small">
+                    {section.length}
+                  </Text>
+                </View>
+              </View>
+
+              <View className="flex-row mb-4">
+                <Text className="basis-1/2 font-poppins600 text-sm text-main-black tracking-small">
+                  Total Payment
+                </Text>
+                <View className="basis-1/2 items-end">
+                  <Text className="font-poppins600 text-sm text-main-blue tracking-small">
+                    {totalPrice}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            <TouchableOpacity
+              className="w-full items-center bg-main-blue py-4 rounded-2xl shadow-lg shadow-blue-500 mt-12"
+              onPress={createBooking}>
+              {loading ? (
+                <View>
+                  <ActivityIndicator color={'white'} />
+                </View>
+              ) : (
+                <Text className="font-poppins600 tracking-medium text-white">
+                  Checkout
+                </Text>
+              )}
+            </TouchableOpacity>
           </View>
-        </View>
+        )}
       </View>
-    </View>
+    </ScrollView>
   );
 }

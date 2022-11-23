@@ -27,8 +27,8 @@ export default function Detail({navigation, route}) {
     navigation.goBack();
   };
 
-  const navOrder = () => {
-    navigation.navigate('Order');
+  const navOrder = id => {
+    navigation.navigate('Order', {eventId: id});
   };
 
   useEffect(() => {
@@ -108,7 +108,7 @@ export default function Detail({navigation, route}) {
       <View className="absolute bottom-5 z-50 w-full px-7">
         <TouchableOpacity
           className="w-full items-center bg-main-blue py-4 rounded-2xl shadow-lg shadow-blue-500"
-          onPress={navOrder}>
+          onPress={() => navOrder(eventId)}>
           <Text className="font-poppins600 tracking-medium text-white">
             Buy Ticket
           </Text>

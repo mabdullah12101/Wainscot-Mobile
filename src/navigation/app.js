@@ -16,6 +16,7 @@ import Order from '../screen/Order';
 import HeaderDefault from '../components/Header/default';
 import EditProfile from '../screen/Profile/edit';
 import AllEvent from '../screen/AllEvent';
+import Payment from '../screen/Payment';
 
 function MenuNavigator() {
   // DAFTARKAN MENU YANG NANTINYA AKAN MASUK KE DALAM DRAWER DISINI
@@ -90,6 +91,15 @@ export default function AppStackNavigator() {
               name="Checkout"
               variant={'bg-main-blue'}
             />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="Payment"
+        component={Payment}
+        options={{
+          header: props => (
+            <HeaderDefault {...props} name="Payment" variant={'bg-main-blue'} />
           ),
         }}
       />
