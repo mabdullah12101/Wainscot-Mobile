@@ -1,8 +1,9 @@
 import React from 'react';
-import {Image, Text, TouchableOpacity, View} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import moment from 'moment';
 import Config from 'react-native-config';
+import FastImage from 'react-native-fast-image';
 
 export default function CardEvent({onPress, data, seeAll}) {
   return (
@@ -10,17 +11,10 @@ export default function CardEvent({onPress, data, seeAll}) {
       className={`w-full h-full ${
         seeAll ? 'rounded-xl' : 'rounded-[40px]'
       } overflow-hidden relative mr-5`}>
-      <Image
+      <FastImage
         source={{uri: Config.CLOUDINARY_URL_IMAGE + data.image}}
-        // style={{width: 400, height: 400}}
         className="w-full h-full"
       />
-      {/* <Image
-        source={{uri: 'https://reactjs.org/logo-og.png'}}
-        className="w-full absolute"
-        style={{width: 400, height: 400}}
-
-      /> */}
       <View className="px-6 pb-6 mt-auto">
         <Text
           className={`font-poppins500 ${

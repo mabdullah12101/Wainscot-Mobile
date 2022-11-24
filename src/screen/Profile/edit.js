@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {
-  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -20,6 +19,7 @@ import Config from 'react-native-config';
 import moment from 'moment';
 import {useDispatch, useSelector} from 'react-redux';
 import {getDataUserById, updateProfileUser} from '../../stores/actions/user';
+import FastImage from 'react-native-fast-image';
 
 export default function EditProfile() {
   // const [date, setDate] = useState(new Date());
@@ -96,7 +96,7 @@ export default function EditProfile() {
     <ScrollView className="flex-1 bg-main-blue">
       <View className="bg-white flex-1 rounded-t-[40px] p-7">
         <View className="w-[137px] h-[137px] mx-auto border-4 border-main-blue rounded-full p-2 overflow-hidden">
-          <Image
+          <FastImage
             source={{
               uri: user.image
                 ? Config.CLOUDINARY_URL_IMAGE + user.image

@@ -1,10 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect, useState} from 'react';
-import {Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import axios from '../../utils/axios';
 import Config from 'react-native-config';
 import {useSelector} from 'react-redux';
+import FastImage from 'react-native-fast-image';
 
 export default function Profile({navigation}) {
   const user = useSelector(state => state.user.data);
@@ -30,7 +31,7 @@ export default function Profile({navigation}) {
     <ScrollView className="bg-main-blue flex-1">
       <View className="bg-white flex-1 rounded-t-[40px] p-7 mt-3">
         <View className="w-[137px] h-[137px] mx-auto border-4 border-main-blue rounded-full p-2 overflow-hidden">
-          <Image
+          <FastImage
             source={{
               uri: user.image
                 ? Config.CLOUDINARY_URL_IMAGE + user.image
@@ -38,10 +39,6 @@ export default function Profile({navigation}) {
             }}
             className="w-full h-full rounded-full"
           />
-          {/* <Image
-            source={require('../../assets/img/profile.png')}
-            className="w-full h-full rounded-full"
-          /> */}
         </View>
 
         <View className="items-center mt-5">
@@ -62,7 +59,12 @@ export default function Profile({navigation}) {
           </TouchableOpacity>
         </View>
 
-        <Image source={require('../../assets/img/card.png')} />
+        <View className="w-72 h-44">
+          <FastImage
+            source={require('../../assets/img/card.png')}
+            className="w-full h-full"
+          />
+        </View>
 
         <TouchableOpacity
           className="flex-row justify-between items-center mt-7"

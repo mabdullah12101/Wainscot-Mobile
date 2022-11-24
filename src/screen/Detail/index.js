@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
-  Image,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -14,6 +13,7 @@ import axios from '../../utils/axios';
 import moment from 'moment';
 import Config from 'react-native-config';
 import {useSelector} from 'react-redux';
+import FastImage from 'react-native-fast-image';
 
 export default function Detail({navigation, route}) {
   const eventId = route.params.eventId;
@@ -115,9 +115,8 @@ export default function Detail({navigation, route}) {
         </TouchableOpacity>
       </View>
       <View className="w-full h-[490px] absolute">
-        <Image
+        <FastImage
           source={{uri: Config.CLOUDINARY_URL_IMAGE + data.image}}
-          // style={{width: 400, height: 400}}
           className="w-full h-full"
         />
       </View>
@@ -194,10 +193,11 @@ export default function Detail({navigation, route}) {
               Location
             </Text>
 
-            <View className="w-full">
-              <Image
+            <View className="w-full h-40">
+              <FastImage
                 source={require('../../assets/img/location.png')}
-                className="w-full"
+                className="w-full h-full"
+                resizeMode={FastImage.resizeMode.contain}
               />
             </View>
           </View>

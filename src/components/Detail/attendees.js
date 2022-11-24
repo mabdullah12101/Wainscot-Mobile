@@ -1,5 +1,6 @@
 import React from 'react';
-import {Image, View} from 'react-native';
+import {View} from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 export default function Attendees({minus}) {
   return (
@@ -7,7 +8,7 @@ export default function Attendees({minus}) {
       className={`w-7 h-7 rounded-full overflow-hidden ${
         minus ? '-ml-2' : ''
       }`}>
-      <Image
+      <FastImage
         source={require('../../assets/img/Avatar.png')}
         className="w-full h-full"
       />

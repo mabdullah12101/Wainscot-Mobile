@@ -3,6 +3,13 @@ import WebView from 'react-native-webview';
 
 export default function Payment({route}) {
   const url = route.params.url;
+  console.log(url);
 
-  return <WebView source={{uri: url}} />;
+  return (
+    <WebView
+      source={{
+        uri: url,
+      }}
+    />
+  );
 }

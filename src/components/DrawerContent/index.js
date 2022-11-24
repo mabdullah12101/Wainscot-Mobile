@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import {
   DrawerContentScrollView,
   DrawerItem,
@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from '../../utils/axios';
 import Config from 'react-native-config';
 import {useSelector} from 'react-redux';
+import FastImage from 'react-native-fast-image';
 
 function DrawerContent(props) {
   // const [user, setUser] = useState({});
@@ -44,7 +45,7 @@ function DrawerContent(props) {
     <View style={styles.container}>
       <DrawerContentScrollView {...props}>
         <View style={styles.containerProfile}>
-          <Image
+          <FastImage
             source={{
               uri: user.image
                 ? Config.CLOUDINARY_URL_IMAGE + user.image
@@ -52,14 +53,7 @@ function DrawerContent(props) {
             }}
             style={styles.avatar}
           />
-          {/* <Image
-            source={{
-              uri: user.image
-                ? Config.CLOUDINARY_URL_IMAGE + user.image
-                : Config.CLOUDINARY_DEFAULT_IMAGE,
-            }}
-            style={styles.avatar}
-          /> */}
+
           <View style={styles.biodata}>
             <Text style={styles.title}>{user.name}</Text>
             <Text style={styles.caption}>

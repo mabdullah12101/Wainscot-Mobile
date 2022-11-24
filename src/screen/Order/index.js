@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
-  Image,
+  Pressable,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -11,6 +11,7 @@ import {
 import axios from '../../utils/axios';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useSelector} from 'react-redux';
+import FastImage from 'react-native-fast-image';
 
 export default function Order({route, navigation}) {
   const userId = useSelector(state => state.user.data.userId);
@@ -22,6 +23,8 @@ export default function Order({route, navigation}) {
   const [loadingBooking, setLoadingBooking] = useState(false);
   const [loadingEvent, setLoadingEvent] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  console.log(section);
 
   const eventId = route.params.eventId;
 
@@ -191,8 +194,12 @@ export default function Order({route, navigation}) {
   return (
     <ScrollView className="bg-main-blue flex-1">
       <View className="bg-white mt-1 flex-1 rounded-t-[40px] py-8">
-        <View className="w-full items-center">
-          <Image source={require('../../assets/img/order.png')} />
+        <View className="w-full h-56 items-center">
+          <FastImage
+            source={require('../../assets/img/order.png')}
+            className="w-full h-full"
+            resizeMode={FastImage.resizeMode.contain}
+          />
         </View>
 
         {loadingEvent || loadingBooking ? (
@@ -212,7 +219,7 @@ export default function Order({route, navigation}) {
                   <View className="flex-row items-center justify-between mt-8">
                     <View className="flex-row items-center">
                       <View className="w-12 h-12 rounded-lg bg-[#F1EAFF] justify-center items-center mr-3">
-                        <Image
+                        <FastImage
                           source={
                             item.seat.split('-')[0].includes('VVIP')
                               ? require('../../assets/img/vvip.png')
@@ -220,6 +227,8 @@ export default function Order({route, navigation}) {
                               ? require('../../assets/img/vip.png')
                               : require('../../assets/img/reg.png')
                           }
+                          resizeMode={FastImage.resizeMode.contain}
+                          className="w-9 h-9"
                         />
                       </View>
                       <View>
@@ -305,9 +314,10 @@ export default function Order({route, navigation}) {
               </View>
             </View>
 
-            <TouchableOpacity
+            <Pressable
               className="w-full items-center bg-main-blue py-4 rounded-2xl shadow-lg shadow-blue-500 mt-12"
-              onPress={createBooking}>
+              onPress={createBooking}
+              disabled={section.length < 1 ? true : false}>
               {loading ? (
                 <View>
                   <ActivityIndicator color={'white'} />
@@ -317,7 +327,7 @@ export default function Order({route, navigation}) {
                   Checkout
                 </Text>
               )}
-            </TouchableOpacity>
+            </Pressable>
           </View>
         )}
       </View>
