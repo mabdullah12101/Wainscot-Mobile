@@ -17,6 +17,7 @@ import HeaderDefault from '../components/Header/default';
 import EditProfile from '../screen/Profile/edit';
 import AllEvent from '../screen/AllEvent';
 import Payment from '../screen/Payment';
+import MyBooking from '../screen/MyBooking';
 
 function MenuNavigator() {
   // DAFTARKAN MENU YANG NANTINYA AKAN MASUK KE DALAM DRAWER DISINI
@@ -45,6 +46,22 @@ function MenuNavigator() {
           ),
           drawerIcon: ({size, color}) => (
             <Icon name="user" color={color} size={size} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="My Booking"
+        component={MyBooking}
+        options={{
+          header: props => (
+            <HeaderDefault
+              {...props}
+              name={'My Booking'}
+              variant={'bg-main-blue'}
+            />
+          ),
+          drawerIcon: ({size, color}) => (
+            <Icon name="menuunfold" color={color} size={size} />
           ),
         }}
       />

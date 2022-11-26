@@ -13,6 +13,7 @@ import axios from '../../utils/axios';
 import Config from 'react-native-config';
 import {useSelector} from 'react-redux';
 import FastImage from 'react-native-fast-image';
+import Toast from 'react-native-toast-message';
 
 function DrawerContent(props) {
   // const [user, setUser] = useState({});
@@ -34,7 +35,7 @@ function DrawerContent(props) {
 
   const handleLogout = async () => {
     try {
-      alert('Logout');
+      Toast.show({type: 'success', text1: 'Logout', text2: 'Success Logout'});
       await AsyncStorage.clear();
       props.navigation.replace('AuthScreen', {
         screen: 'Login',

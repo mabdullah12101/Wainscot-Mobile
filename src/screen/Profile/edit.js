@@ -20,6 +20,7 @@ import moment from 'moment';
 import {useDispatch, useSelector} from 'react-redux';
 import {getDataUserById, updateProfileUser} from '../../stores/actions/user';
 import FastImage from 'react-native-fast-image';
+import Toast from 'react-native-toast-message';
 
 export default function EditProfile() {
   // const [date, setDate] = useState(new Date());
@@ -76,11 +77,23 @@ export default function EditProfile() {
   };
 
   const handleEditProfile = () => {
-    dispatch(updateProfileUser(user.data.userId, form)).then(() => {
-      dispatch(getDataUserById(user.data.userId));
+    dispatch(updateProfileUser(user.data.userId, form))
+      .then(() => {
+        dispatch(getDataUserById(user.data.userId));
 
-      alert('sucess');
-    });
+        Toast.show({
+          type: 'success',
+          text1: 'Update Profile',
+          text2: 'Success Update Profile',
+        });
+      })
+      .catch(() => {
+        Toast.show({
+          type: 'error',
+          text1: 'Update Profile',
+          text2: 'Failed Update Profile',
+        });
+      });
     // console.log(form);
     // try {
     //   console.log(form);

@@ -12,6 +12,7 @@ import axios from '../../utils/axios';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useSelector} from 'react-redux';
 import FastImage from 'react-native-fast-image';
+import Toast from 'react-native-toast-message';
 
 export default function Order({route, navigation}) {
   const userId = useSelector(state => state.user.data.userId);
@@ -185,9 +186,9 @@ export default function Order({route, navigation}) {
         setLoading(false);
         navigation.navigate('Payment', {url: res.data.data.redirect_url});
       })
-      .catch(err => {
-        console.log(err);
+      .catch(() => {
         setLoading(false);
+        Toast.show({type: 'error', text1: 'Order', text2: 'Order Failed'});
       });
   };
 

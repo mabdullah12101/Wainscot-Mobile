@@ -1,22 +1,35 @@
 import React, {useState} from 'react';
-import {Text, View, ScrollView, TouchableOpacity} from 'react-native';
+import {
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import ButtonAuth from '../../components/Button/auth';
 import InputAuth from '../../components/Input/auth';
 import axios from '../../utils/axios';
+import Toast from 'react-native-toast-message';
 
 export default function Signup(props) {
   const [form, setForm] = useState({});
+  const [loading, setLoading] = useState(false);
+
   const handleSignup = async () => {
+    setLoading(true);
     try {
-      console.log(form);
       const result = await axios.post('auth/register', form);
-      console.log(result.data);
-      alert(result.data.message);
+      Toast.show({
+        type: 'success',
+        text1: 'Sign Up',
+        text2: result.data.message,
+      });
+      setLoading(false);
       props.navigation.navigate('Signin');
     } catch (error) {
-      console.log(error);
+      Toast.show({type: 'error', text1: 'Sign Up', text2: 'Sign Up Failed'});
+      setLoading(false);
     }
-    // console.log(form);
   };
 
   const navLogin = () => {
@@ -66,7 +79,11 @@ export default function Signup(props) {
 
       <View className="mb-6" />
 
-      <ButtonAuth content={'Sign Up'} onPress={handleSignup} />
+      <ButtonAuth
+        content={loading ? <ActivityIndicator color={'white'} /> : 'Sign Up'}
+        isLoading={loading}
+        onPress={handleSignup}
+      />
     </ScrollView>
   );
 }
