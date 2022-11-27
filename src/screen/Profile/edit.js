@@ -1,5 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
+  ActivityIndicator,
   ScrollView,
   StyleSheet,
   Text,
@@ -11,25 +12,23 @@ import RNPickerSelect from 'react-native-picker-select';
 import Icon from 'react-native-vector-icons/AntDesign';
 import InputRadio from '../../components/Input/radio';
 import DatePicker from 'react-native-date-picker';
-// import InputAuth from '../../components/Input/auth';
 import ButtonAuth from '../../components/Button/auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from '../../utils/axios';
 import Config from 'react-native-config';
 import moment from 'moment';
 import {useDispatch, useSelector} from 'react-redux';
-import {getDataUserById, updateProfileUser} from '../../stores/actions/user';
+import {
+  getDataUserById,
+  updateImage,
+  updateProfileUser,
+} from '../../stores/actions/user';
 import FastImage from 'react-native-fast-image';
 import Toast from 'react-native-toast-message';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 export default function EditProfile() {
-  // const [date, setDate] = useState(new Date());
   const dispatch = useDispatch();
-  // const [userId, setUserId] = useState('');
   const [open, setOpen] = useState(false);
-  // const [user, setUser] = useState({});
   const user = useSelector(state => state.user);
-
   const [form, setForm] = useState({
     name: user.data.name,
     username: user.data.username,
@@ -40,83 +39,123 @@ export default function EditProfile() {
     nationality: user.data.nationality,
     dateOfBirth: user.data.dateOfBirth,
   });
+  const [newImage, setNewImage] = useState({});
+  const lengthImage = Object.keys(newImage).length;
+  const [loading, setLoading] = useState(false);
 
-  // console.log(moment(date).format('DD-MM-YYYY'));
-  // console.log(date);
-  console.log(new Date(user.dateOfBirth));
-  console.log(form);
-
-  // useEffect(() => {
-  //   getUserById();
-  // }, []);
-
-  // const getUserById = async () => {
-  //   try {
-  //     const data = await AsyncStorage.getItem('userId');
-  //     setUserId(data);
-  //     const result = await axios.get(`user/${data}`);
-  //     const resultData = result.data.data[0];
-  //     setUser(resultData);
-  //     setForm({
-  //       name: resultData.name,
-  //       username: resultData.username,
-  //       email: resultData.email,
-  //       phoneNumber: resultData.phoneNumber,
-  //       gender: resultData.gender,
-  //       profession: resultData.profession,
-  //       nationality: resultData.nationality,
-  //       dateOfBirth: resultData.dateOfBirth,
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  const getDataUser = () => {
+    setLoading(true);
+    dispatch(getDataUserById(user.data.userId))
+      .then(() => {
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  };
 
   const handleChangeForm = (name, value) => {
     setForm({...form, [name]: value});
   };
 
   const handleEditProfile = () => {
+    setLoading(true);
     dispatch(updateProfileUser(user.data.userId, form))
       .then(() => {
-        dispatch(getDataUserById(user.data.userId));
-
         Toast.show({
           type: 'success',
           text1: 'Update Profile',
           text2: 'Success Update Profile',
         });
+        getDataUser();
       })
       .catch(() => {
+        setLoading(false);
         Toast.show({
           type: 'error',
           text1: 'Update Profile',
           text2: 'Failed Update Profile',
         });
       });
-    // console.log(form);
-    // try {
-    //   console.log(form);
-    //   const result = await axios.patch(`user/${userId}`, form);
+  };
 
-    //   alert(result.data.message);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+  const handleImagePicker = async () => {
+    try {
+      const result = await launchImageLibrary();
+      setNewImage({['image']: result.assets[0]});
+    } catch (error) {}
+  };
+
+  const handleUpdateImage = () => {
+    const imageData = new FormData();
+    imageData.append('image', {
+      uri: newImage.image.uri,
+      name: newImage.image.fileName,
+      type: newImage.image.type,
+    });
+    console.log(imageData);
+    setLoading(true);
+    dispatch(updateImage(user.data.userId, imageData))
+      .then(() => {
+        Toast.show({
+          type: 'success',
+          text1: 'Update Image',
+          text2: 'Success Update Image',
+        });
+        getDataUser();
+      })
+      .catch(() => {
+        setLoading(false);
+        Toast.show({
+          type: 'error',
+          text1: 'Update Image',
+          text2: 'Failed Update Image',
+        });
+      });
   };
 
   return (
     <ScrollView className="flex-1 bg-main-blue">
       <View className="bg-white flex-1 rounded-t-[40px] p-7">
-        <View className="w-[137px] h-[137px] mx-auto border-4 border-main-blue rounded-full p-2 overflow-hidden">
-          <FastImage
-            source={{
-              uri: user.image
-                ? Config.CLOUDINARY_URL_IMAGE + user.image
-                : Config.CLOUDINARY_DEFAULT_IMAGE,
-            }}
-            className="w-full h-full rounded-full"
-          />
+        <View className="items-center">
+          <TouchableOpacity
+            className="w-[137px] h-[137px] border-4 border-main-blue rounded-full p-2 overflow-hidden relative"
+            onPress={handleImagePicker}>
+            <View className="absolute z-50 top-12 right-12">
+              <Icon name="camera" size={30} color="white" />
+            </View>
+            <FastImage
+              source={{
+                uri:
+                  lengthImage > 0
+                    ? newImage.image.uri
+                    : user.data.image
+                    ? Config.CLOUDINARY_URL_IMAGE + user.data.image
+                    : Config.CLOUDINARY_DEFAULT_IMAGE,
+              }}
+              className="w-full h-full rounded-full"
+            />
+          </TouchableOpacity>
+
+          {lengthImage < 1 ? (
+            <TouchableOpacity
+              className="justify-center items-center border border-main-blue w-40 h-12 rounded-lg mt-5"
+              onPress={handleImagePicker}>
+              <Text className="font-poppins600 text-main-blue">
+                Choose Photo
+              </Text>
+            </TouchableOpacity>
+          ) : loading ? (
+            <View className="justify-center items-center border border-main-blue w-40 h-12 rounded-lg mt-5">
+              <ActivityIndicator color={'blue'} />
+            </View>
+          ) : (
+            <TouchableOpacity
+              className="justify-center items-center border border-main-blue w-40 h-12 rounded-lg mt-5"
+              onPress={handleUpdateImage}>
+              <Text className="font-poppins600 text-main-blue">Save</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <View className="mt-12">
@@ -250,7 +289,11 @@ export default function EditProfile() {
             </TouchableOpacity>
           </View>
 
-          <ButtonAuth content={'Save'} onPress={handleEditProfile} />
+          <ButtonAuth
+            content={loading ? <ActivityIndicator color={'white'} /> : 'Save'}
+            onPress={handleEditProfile}
+            isLoading={loading}
+          />
         </View>
       </View>
     </ScrollView>

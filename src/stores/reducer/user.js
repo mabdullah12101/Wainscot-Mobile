@@ -75,7 +75,7 @@ const user = (state = initialState, action) => {
         ...state,
         isLoading: false,
         isError: true,
-        message: action.payload.response.data.message,
+        // message: action.payload.response.data.message,
       };
     }
     case 'UPDATE_PASSWORD_BY_ID_PENDING': {
