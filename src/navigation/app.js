@@ -18,6 +18,7 @@ import EditProfile from '../screen/Profile/edit';
 import AllEvent from '../screen/AllEvent';
 import Payment from '../screen/Payment';
 import MyBooking from '../screen/MyBooking';
+import ChangePassword from '../screen/Profile/ChangePassword';
 
 function MenuNavigator() {
   // DAFTARKAN MENU YANG NANTINYA AKAN MASUK KE DALAM DRAWER DISINI
@@ -133,9 +134,19 @@ export default function AppStackNavigator() {
           ),
         }}
       />
-      {/* PAYMENT */}
-      {/* EDIT PROFILE */}
-      {/* CHANGE PASSWORD */}
+      <Stack.Screen
+        name="Change Password"
+        component={ChangePassword}
+        options={{
+          header: props => (
+            <HeaderDefault
+              {...props}
+              name="Change Password"
+              variant={'bg-main-blue'}
+            />
+          ),
+        }}
+      />
     </Stack.Navigator>
   );
 }

@@ -26,6 +26,7 @@ export default function Profile({navigation}) {
   // };
 
   const navEditProfile = () => navigation.navigate('Edit Profile');
+  const navChangePassword = () => navigation.navigate('Change Password');
 
   return (
     <ScrollView className="bg-main-blue flex-1">
@@ -80,7 +81,9 @@ export default function Profile({navigation}) {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity className="flex-row justify-between items-center mt-7 mb-5">
+        <TouchableOpacity
+          className="flex-row justify-between items-center mt-7 mb-5"
+          onPress={navChangePassword}>
           <View className="flex-row gap-x-6">
             <Icon name="lock" size={24} color="#C1C5D0" />
             <Text className="font-poppins600 text-sm tracking-medium text-main-black">
