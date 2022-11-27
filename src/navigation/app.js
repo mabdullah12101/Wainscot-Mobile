@@ -19,6 +19,7 @@ import AllEvent from '../screen/AllEvent';
 import Payment from '../screen/Payment';
 import MyBooking from '../screen/MyBooking';
 import ChangePassword from '../screen/Profile/ChangePassword';
+import MyWishlist from '../screen/MyWishlist';
 
 function MenuNavigator() {
   // DAFTARKAN MENU YANG NANTINYA AKAN MASUK KE DALAM DRAWER DISINI
@@ -66,14 +67,27 @@ function MenuNavigator() {
           ),
         }}
       />
-      {/* MY BOOKING */}
-      {/* MY WISHLIST */}
+      <Drawer.Screen
+        name="My Wishlist"
+        component={MyWishlist}
+        options={{
+          header: props => (
+            <HeaderDefault
+              {...props}
+              name={'My Wishlist'}
+              variant={'bg-main-blue'}
+            />
+          ),
+          drawerIcon: ({size, color}) => (
+            <Icon name="heart" color={color} size={size} />
+          ),
+        }}
+      />
     </Drawer.Navigator>
   );
 }
 
 export default function AppStackNavigator() {
-  // DAFTARKAN MENU YANG NANTINYA DAPAT DI AKSES DILUAR DRAWER DISINI
   return (
     <Stack.Navigator initialRouteName="MenuNavigator">
       <Stack.Screen

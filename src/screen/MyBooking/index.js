@@ -20,7 +20,6 @@ export default function MyBooking() {
   const [page, setPage] = useState(1);
   const [loadingAll, setLoadingAll] = useState(true);
   const userId = useSelector(state => state.user.data.userId);
-  const bookings = useSelector(state => state.bookings);
   const [modalDetail, setModalDetail] = useState(false);
   const [totalPage, setTotalPage] = useState(10);
   const [detailBooking, setDetailBooking] = useState({});
