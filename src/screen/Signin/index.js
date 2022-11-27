@@ -3,13 +3,11 @@ import {
   ActivityIndicator,
   ScrollView,
   Text,
-  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
 import ButtonAuth from '../../components/Button/auth';
 import InputAuth from '../../components/Input/auth';
-import axios from '../../utils/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {getDataUserById} from '../../stores/actions/user';

@@ -2,40 +2,91 @@ import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
-  Pressable,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import ListBooking from '../../components/Booking';
-import {getBookingByUserId} from '../../stores/actions/booking';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/AntDesign';
 import moment from 'moment';
 import DetailBooking from '../../components/Booking/DetailBooking';
+import axios from '../../utils/axios';
 
 export default function MyBooking() {
+  const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [loadingAll, setLoadingAll] = useState(true);
   const userId = useSelector(state => state.user.data.userId);
   const bookings = useSelector(state => state.bookings);
   const [modalDetail, setModalDetail] = useState(false);
+  const [totalPage, setTotalPage] = useState(10);
   const [detailBooking, setDetailBooking] = useState({});
-  //   console.log(bookings.data);
-  const dispatch = useDispatch();
-  console.log(detailBooking);
+  const [last, setLast] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [loadMore, setLoadMore] = useState(false);
 
   useEffect(() => {
-    dispatch(getBookingByUserId(userId, page)).then(() => {
-      setLoadingAll(false);
-    });
+    getBooking();
+  }, []);
+
+  useEffect(() => {
+    getBooking();
   }, [page]);
 
-  const handleDetailBooking = data => {
+  const getBooking = async () => {
+    try {
+      if (page <= totalPage) {
+        const result = await axios.get(`booking/${userId}?page=${page}`);
+        console.log(result.data);
+        if (result.data.data.length > 0) {
+          if (page === 1) {
+            setData(result.data.data);
+          } else {
+            setData([...data, ...result.data.data]);
+          }
+          setTotalPage(result.data.pagination.totalPage);
+        }
+      } else {
+        setLast(true);
+      }
+      setRefresh(false);
+      setLoading(false);
+      setLoadingAll(false);
+      setLoadMore(false);
+    } catch (error) {}
+  };
+
+  const handleRefresh = () => {
+    setPage(1);
+    setLast(false);
+    if (page !== 1) {
+      setRefresh(true);
+    } else {
+      getBooking();
+    }
+  };
+
+  const handleLoadMore = () => {
+    if (!loadMore) {
+      // false
+      const newPage = page + 1; // 1 + 1 = 2
+      setLoadMore(true);
+      if (newPage <= totalPage + 1) {
+        setLoading(true);
+        setPage(newPage);
+      } else {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleDetailBooking = detail => {
     setModalDetail(true);
-    setDetailBooking(data);
+    setDetailBooking(detail);
   };
 
   const handleCloseModal = () => {
@@ -108,13 +159,13 @@ export default function MyBooking() {
       <View className="bg-main-blue">
         <View
           className={`bg-white px-7 rounded-t-[40px] mt-3 ${
-            bookings.data.length > 3 ? '' : 'h-screen'
+            data.length > 3 ? '' : 'h-screen'
           }`}>
           {loadingAll ? (
             <View className="mt-48 items-center h-screen">
               <ActivityIndicator size={'large'} color="blue" />
             </View>
-          ) : bookings.data.length < 1 ? (
+          ) : data.length < 1 ? (
             <View className="items-center mt-48 h-screen">
               <Text className="text-main-black font-poppins600 text-2xl tracking-medium">
                 No tickets bought
@@ -129,13 +180,28 @@ export default function MyBooking() {
           ) : (
             <View>
               <FlatList
-                data={bookings.data}
+                data={data}
                 keyExtractor={item => item.bookingId}
                 renderItem={({item}) => (
                   <ListBooking
                     data={item}
                     onPress={() => handleDetailBooking(item)}
                   />
+                )}
+                onRefresh={handleRefresh}
+                refreshing={refresh}
+                onEndReached={handleLoadMore}
+                onEndReachedThreshold={0.1}
+                ListFooterComponent={() => (
+                  <View className="items-center">
+                    {last ? (
+                      <Text className="my-10">-- No more data --</Text>
+                    ) : loading ? (
+                      <View className="my-10">
+                        <ActivityIndicator size="large" color="blue" />
+                      </View>
+                    ) : null}
+                  </View>
                 )}
               />
             </View>
