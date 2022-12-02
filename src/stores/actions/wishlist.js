@@ -2,7 +2,10 @@ import axios from '../../utils/axios';
 
 export const getAllWishlishtByUserId = (userId, page) => {
   return {
-    type: 'GET_ALL_WISHLIST_BY_USER_ID',
+    type:
+      page === 1
+        ? 'GET_ALL_WISHLIST_BY_USER_ID'
+        : 'ADD_ALL_WISHLIST_BY_USER_ID',
     payload: axios.get(`/wishlist/userId/${userId}?page=${page}`),
   };
 };

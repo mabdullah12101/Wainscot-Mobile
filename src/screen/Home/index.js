@@ -22,11 +22,6 @@ export default function Home(props) {
   const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
   const [listDate, setListDate] = useState([]);
   const [loading, setLoading] = useState(false);
-  console.log(listDate);
-  console.log(allEvents);
-  console.log(search);
-  const navDetail = eventId =>
-    props.navigation.navigate('Detail', {eventId: eventId});
 
   useEffect(() => {
     getAllData();
@@ -36,6 +31,9 @@ export default function Home(props) {
     getAllData();
     generateDate();
   }, [date, search]);
+
+  const navDetail = eventId =>
+    props.navigation.navigate('Detail', {eventId: eventId});
 
   const getAllData = async () => {
     try {
@@ -63,81 +61,83 @@ export default function Home(props) {
   };
 
   return (
-    <ScrollView style={styles.container} className="bg-main-blue">
-      <View className="mx-7 relative my-6">
-        <View className="absolute top-4 left-7">
-          <Icon name="search" color={'#FFFFFF'} size={24} />
-        </View>
-        <TextInput
-          className="text-white font-poppins500 border border-white rounded-2xl py-4 pl-16"
-          placeholder="Search Event..."
-          placeholderTextColor={'#FFFFFF80'}
-          onSubmitEditing={() => console.log(search)}
-          onChangeText={value => setSearch(value)}
-          value={search}
-        />
-      </View>
-
-      <View className="bg-[#222B45] flex-1 rounded-t-[40px]">
-        <View style={styles.sortDateContainer} className="px-7 py-8">
-          {listDate.map((item, index) => (
-            <View key={index}>
-              <ListDate
-                date={moment(item).format('DD')}
-                day={moment(item).format('ddd')}
-                active={index === 2 ? true : false}
-                onPress={() => {
-                  setDate(moment(item).format('YYYY-MM-DD'));
-                }}
-              />
-            </View>
-          ))}
+    <ScrollView style={styles.container} className="bg-[#FCFCFC]">
+      <View className="bg-main-blue flex-1">
+        <View className="mx-7 relative my-6">
+          <View className="absolute top-4 left-7">
+            <Icon name="search" color={'#FFFFFF'} size={24} />
+          </View>
+          <TextInput
+            className="text-white font-poppins500 border border-white rounded-2xl py-4 pl-16"
+            placeholder="Search Event..."
+            placeholderTextColor={'#FFFFFF80'}
+            onSubmitEditing={() => console.log(search)}
+            onChangeText={value => setSearch(value)}
+            value={search}
+          />
         </View>
 
-        <View className="bg-[#FCFCFC] flex-1 rounded-t-[40px] px-7 py-9">
-          <View className="flex-row justify-between items-center mb-8">
-            <Text className="font-poppins600 text-main-black tracking-medium text-xl">
-              Events For You
-            </Text>
-            <TouchableOpacity
-              onPress={() => props.navigation.navigate('AllEvent')}>
-              <Text className="font-poppins600 text-main-blue tracking-medium text-lg">
-                See All
-              </Text>
-            </TouchableOpacity>
+        <View className="bg-[#222B45] flex-1 rounded-t-[40px]">
+          <View style={styles.sortDateContainer} className="px-7 py-8">
+            {listDate.map((item, index) => (
+              <View key={index}>
+                <ListDate
+                  date={moment(item).format('DD')}
+                  day={moment(item).format('ddd')}
+                  active={index === 2 ? true : false}
+                  onPress={() => {
+                    setDate(moment(item).format('YYYY-MM-DD'));
+                  }}
+                />
+              </View>
+            ))}
           </View>
 
-          {loading ? (
-            <View className="h-56 items-center justify-center">
-              <ActivityIndicator size={'large'} />
+          <View className="bg-[#FCFCFC] flex-1 rounded-t-[40px] px-7 py-9">
+            <View className="flex-row justify-between items-center mb-8">
+              <Text className="font-poppins600 text-main-black tracking-medium text-xl">
+                Events For You
+              </Text>
+              <TouchableOpacity
+                onPress={() => props.navigation.navigate('AllEvent')}>
+                <Text className="font-poppins600 text-main-blue tracking-medium text-lg">
+                  See All
+                </Text>
+              </TouchableOpacity>
             </View>
-          ) : (
-            <>
-              <FlatList
-                horizontal={true}
-                data={allEvents}
-                renderItem={({item}) => (
-                  <View className="w-[260px] h-[376px] mr-4">
-                    <CardEvent
-                      data={item}
-                      onPress={() => navDetail(item.eventId)}
-                    />
-                  </View>
-                )}
-                keyExtractor={item => item.eventId}
-              />
 
-              {allEvents.length < 1 ? (
-                <View className="h-56 items-center justify-center">
-                  <Text className="font-poppins600 text-xl text-main-black">
-                    No Data
-                  </Text>
-                </View>
-              ) : (
-                ''
-              )}
-            </>
-          )}
+            {loading ? (
+              <View className="h-56 items-center justify-center">
+                <ActivityIndicator size={'large'} />
+              </View>
+            ) : (
+              <>
+                <FlatList
+                  horizontal={true}
+                  data={allEvents}
+                  renderItem={({item}) => (
+                    <View className="w-[260px] h-[376px] mr-4">
+                      <CardEvent
+                        data={item}
+                        onPress={() => navDetail(item.eventId)}
+                      />
+                    </View>
+                  )}
+                  keyExtractor={item => item.eventId}
+                />
+
+                {allEvents.length < 1 ? (
+                  <View className="h-56 items-center justify-center">
+                    <Text className="font-poppins600 text-xl text-main-black">
+                      No Data
+                    </Text>
+                  </View>
+                ) : (
+                  ''
+                )}
+              </>
+            )}
+          </View>
         </View>
       </View>
 

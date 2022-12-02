@@ -8,17 +8,19 @@ import {
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import ListWishlist from '../../components/Wishlist/ListWishlist';
-import axios from '../../utils/axios';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {deleteWishlist} from '../../stores/actions/wishlist';
+import {
+  deleteWishlist,
+  getAllWishlishtByUserId,
+} from '../../stores/actions/wishlist';
 import Toast from 'react-native-toast-message';
 
 export default function MyWishlist() {
   const dispatch = useDispatch();
-  const [data, setData] = useState([]);
+  const wishlist = useSelector(state => state.wishlists);
   const [page, setPage] = useState(1);
-  const [loadingAll, setLoadingAll] = useState(true);
+  const [loadingAll, setLoadingAll] = useState(false);
   const userId = useSelector(state => state.user.data.userId);
   const [totalPage, setTotalPage] = useState(10);
   const [last, setLast] = useState(false);
@@ -31,39 +33,53 @@ export default function MyWishlist() {
   const [nameEvent, setNameEvent] = useState('');
 
   useEffect(() => {
-    getWishlist();
-  }, []);
-
-  useEffect(() => {
-    getWishlist();
+    getAllWishlist();
   }, [page]);
 
-  const getWishlist = async () => {
-    try {
-      if (page <= totalPage) {
-        const result = await axios.get(
-          `/wishlist/userId/${userId}?page=${page}`,
-        );
-        if (result.data.data.length > 0) {
-          if (page === 1) {
-            setData(result.data.data);
-          } else {
-            setData([...data, ...result.data.data]);
-          }
-          setTotalPage(result.data.pagination.totalPage);
-        } else {
-          setData([]);
+  const getAllWishlist = async () => {
+    if (page <= totalPage && !last) {
+      await dispatch(getAllWishlishtByUserId(userId, page)).then(res => {
+        const result = res.action.payload.data;
+        if (result.data.length > 0) {
+          setTotalPage(result.pagination.totalPage);
         }
-      } else {
-        setPage(totalPage);
-        setLast(true);
-      }
-      setRefresh(false);
-      setLoading(false);
-      setLoadingAll(false);
-      setLoadMore(false);
-    } catch (error) {}
+      });
+    } else {
+      setPage(totalPage);
+      setLast(true);
+    }
+    setRefresh(false);
+    setLoading(false);
+    setLoadingAll(false);
+    setLoadMore(false);
   };
+
+  // const getWishlist = async () => {
+  //   try {
+  //     if (page <= totalPage) {
+  //       const result = await axios.get(
+  //         `/wishlist/userId/${userId}?page=${page}`,
+  //       );
+  //       if (result.data.data.length > 0) {
+  //         if (page === 1) {
+  //           setData(result.data.data);
+  //         } else {
+  //           setData([...data, ...result.data.data]);
+  //         }
+  //         setTotalPage(result.data.pagination.totalPage);
+  //       } else {
+  //         setData([]);
+  //       }
+  //     } else {
+  //       setPage(totalPage);
+  //       setLast(true);
+  //     }
+  //     setRefresh(false);
+  //     setLoading(false);
+  //     setLoadingAll(false);
+  //     setLoadMore(false);
+  //   } catch (error) {}
+  // };
 
   const handleRefresh = () => {
     setPage(1);
@@ -71,7 +87,7 @@ export default function MyWishlist() {
     if (page !== 1) {
       setRefresh(true);
     } else {
-      getWishlist();
+      getAllWishlist();
     }
   };
 
@@ -99,16 +115,22 @@ export default function MyWishlist() {
     dispatch(deleteWishlist(wishlistId))
       .then(res => {
         const result = res.action.payload.data;
+        setPage(1);
+        setLast(false);
+        setLoadingAll(true);
         setDeleteModal(false);
-        // if (!result.isError) {
-        // }
         Toast.show({
           type: 'success',
           text1: 'Delete Wishlist',
           text2: result.message,
         });
-        setLoadingAll(true);
-        getWishlist();
+        dispatch(getAllWishlishtByUserId(userId, page)).then(response => {
+          const resultGet = response.action.payload.data;
+          if (resultGet.data.length > 0) {
+            setTotalPage(resultGet.pagination.totalPage);
+          }
+          setLoadingAll(false);
+        });
         setLoadingDelete(false);
       })
       .catch(() => {
@@ -131,13 +153,13 @@ export default function MyWishlist() {
     <View className="bg-main-blue">
       <View
         className={`bg-white px-7 rounded-t-[40px] mt-3 ${
-          data.length > 3 ? '' : 'h-screen'
+          wishlist.data.length > 3 ? '' : 'h-screen'
         }`}>
-        {loadingAll ? (
+        {loadingAll || wishlist.isLoading ? (
           <View className="mt-48 items-center h-screen">
             <ActivityIndicator size={'large'} color="blue" />
           </View>
-        ) : data.length < 1 ? (
+        ) : wishlist.data.length < 1 ? (
           <View className="items-center mt-48 h-screen">
             <Text className="text-main-black font-poppins600 text-2xl tracking-medium text-center">
               No Wishlist
@@ -187,7 +209,7 @@ export default function MyWishlist() {
             </Modal>
 
             <FlatList
-              data={data}
+              data={wishlist.data}
               keyExtractor={item => item.wishlistId}
               renderItem={({item}) => (
                 <ListWishlist
@@ -195,7 +217,6 @@ export default function MyWishlist() {
                   handleDeleteWishlist={() =>
                     handleDeleteModal(item.wishlistId, item.event.name)
                   }
-                  // onPress={() => handleDetailBooking(item)}
                 />
               )}
               onRefresh={handleRefresh}

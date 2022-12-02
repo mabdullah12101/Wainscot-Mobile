@@ -9,16 +9,15 @@ import {
 import ButtonAuth from '../../components/Button/auth';
 import InputAuth from '../../components/Input/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {getDataUserById} from '../../stores/actions/user';
 import {login} from '../../stores/actions/auth';
 import Toast from 'react-native-toast-message';
-
-// import Icon from 'react-native-vector-icons/AntDesign';
+import {getAllWishlishtByUserId} from '../../stores/actions/wishlist';
 
 export default function Signin(props) {
   const dispatch = useDispatch();
-  const auth = useSelector(state => state.auth);
+  const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     email: '',
@@ -30,51 +29,24 @@ export default function Signin(props) {
   };
 
   const handleLogin = async () => {
+    setLoading(true);
     await dispatch(login(form))
       .then(res => {
         const result = res.action.payload.data;
         const resultData = result.data[0];
         dispatch(getDataUserById(resultData.userId));
+        dispatch(getAllWishlishtByUserId(resultData.userId, 1));
         AsyncStorage.setItem('token', resultData.token);
         AsyncStorage.setItem('refreshToken', resultData.refreshToken);
+        setLoading(false);
         Toast.show({type: 'success', text1: 'Success', text2: result.message});
         props.navigation.replace('AppScreen', {screen: 'MenuNavigator'});
       })
       .catch(() => {
         Toast.show({type: 'error', text1: 'Failed', text2: 'Login Failed'});
+        setLoading(false);
       });
-
-    // if (!auth.isError) {
-    //   dispatch(getDataUserById(auth.data[0].userId));
-    //   AsyncStorage.setItem('token', auth.data[0].token);
-    //   AsyncStorage.setItem('refreshToken', auth.data[0].refreshToken);
-    //   alert(auth.data.message);
-    //   props.navigation.replace('AppScreen', {screen: 'MenuNavigator'});
-    // } else {
-    //   alert(auth.data.message);
-    // }
   };
-
-  // const handleLogin = async () => {
-  //   try {
-  //     // props.navigation.replace('AppScreen', {screen: 'MenuNavigator'});
-  //     const result = await axios.post('auth/login', form);
-  //     await AsyncStorage.setItem('userId', result.data.data[0].userId);
-  //     await AsyncStorage.setItem('token', result.data.data[0].token);
-  //     await AsyncStorage.setItem(
-  //       'refreshToken',
-  //       result.data.data[0].refreshToken,
-  //     );
-  //     alert(result.data.message);
-  //     props.navigation.replace('AppScreen', {screen: 'MenuNavigator'});
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // const handleLogin = () => {
-  //   props.navigation.replace('AppScreen', {screen: 'MenuNavigator'});
-  // };
 
   const navSignup = () => {
     props.navigation.navigate('Signup');
@@ -115,10 +87,8 @@ export default function Signin(props) {
       </TouchableOpacity>
 
       <ButtonAuth
-        content={
-          auth.isLoading ? <ActivityIndicator color={'#FFFFFF'} /> : 'Login'
-        }
-        isLoading={auth.isLoading}
+        content={loading ? <ActivityIndicator color={'#FFFFFF'} /> : 'Login'}
+        isLoading={loading}
         onPress={handleLogin}
       />
     </ScrollView>

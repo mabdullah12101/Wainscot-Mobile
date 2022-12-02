@@ -12,10 +12,12 @@ import IconContent from '../../components/Detail/iconcontent';
 import axios from '../../utils/axios';
 import moment from 'moment';
 import Config from 'react-native-config';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import FastImage from 'react-native-fast-image';
+import {getAllWishlishtByUserId} from '../../stores/actions/wishlist';
 
 export default function Detail({navigation, route}) {
+  const dispatch = useDispatch();
   const eventId = route.params.eventId;
   const [data, setData] = useState({});
   const userId = useSelector(state => state.user.data.userId);
@@ -75,6 +77,7 @@ export default function Detail({navigation, route}) {
         userId: userId,
       });
       setCheckWishlist(result.data.data[0].wishlistId);
+      dispatch(getAllWishlishtByUserId(userId, 1));
     } catch (error) {
       console.log(error);
     }
@@ -84,6 +87,7 @@ export default function Detail({navigation, route}) {
     try {
       await axios.delete(`/wishlist/${checkWishlist}`);
       setCheckWishlist('');
+      dispatch(getAllWishlishtByUserId(userId, 1));
     } catch (error) {
       console.log(error);
     }
@@ -104,7 +108,7 @@ export default function Detail({navigation, route}) {
   };
 
   return (
-    <ScrollView>
+    <ScrollView className="bg-white flex-1">
       <View className="absolute bottom-5 z-50 w-full px-7">
         <TouchableOpacity
           className="w-full items-center bg-main-blue py-4 rounded-2xl shadow-lg shadow-blue-500"

@@ -1,5 +1,5 @@
 const initialState = {
-  data: {},
+  data: [],
   isLoading: false,
   isError: false,
   message: '',
@@ -11,7 +11,7 @@ const wishlists = (state = initialState, action) => {
     case 'GET_ALL_WISHLIST_BY_USER_ID_PENDING': {
       return {
         ...state,
-        data: {},
+        data: [],
         isLoading: true,
         pagination: {},
         message: '',
@@ -29,7 +29,32 @@ const wishlists = (state = initialState, action) => {
     case 'GET_ALL_WISHLIST_BY_USER_ID_REJECTED': {
       return {
         ...state,
-        data: {},
+        data: [],
+        isLoading: false,
+        pagination: {},
+      };
+    }
+    case 'ADD_ALL_WISHLIST_BY_USER_ID_PENDING': {
+      return {
+        ...state,
+        isLoading: true,
+        pagination: {},
+        message: '',
+        isError: false,
+      };
+    }
+    case 'ADD_ALL_WISHLIST_BY_USER_ID_FULFILLED': {
+      return {
+        ...state,
+        data: [...state.data, ...action.payload.data.data],
+        isLoading: false,
+        pagination: action.payload.data.pagination,
+      };
+    }
+    case 'ADD_ALL_WISHLIST_BY_USER_ID_REJECTED': {
+      return {
+        ...state,
+        // data: {},
         isLoading: false,
         pagination: {},
       };
