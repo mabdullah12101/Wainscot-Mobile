@@ -20,9 +20,9 @@ export default function MyWishlist() {
   const dispatch = useDispatch();
   const wishlist = useSelector(state => state.wishlists);
   const [page, setPage] = useState(1);
-  const [loadingAll, setLoadingAll] = useState(false);
+  const [loadingAll, setLoadingAll] = useState(true);
   const userId = useSelector(state => state.user.data.userId);
-  const [totalPage, setTotalPage] = useState(10);
+  const [totalPage, setTotalPage] = useState(1);
   const [last, setLast] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -36,17 +36,29 @@ export default function MyWishlist() {
     getAllWishlist();
   }, [page]);
 
-  const getAllWishlist = async () => {
-    if (page <= totalPage && !last) {
-      await dispatch(getAllWishlishtByUserId(userId, page)).then(res => {
+  const getAllWishlist = async (refreshScreen = false) => {
+    if (refreshScreen) {
+      await dispatch(getAllWishlishtByUserId(userId, 1)).then(res => {
         const result = res.action.payload.data;
         if (result.data.length > 0) {
           setTotalPage(result.pagination.totalPage);
+          setLast(false);
         }
       });
     } else {
-      setPage(totalPage);
-      setLast(true);
+      if (page <= totalPage && !last && !refreshScreen) {
+        console.log('yes');
+        await dispatch(getAllWishlishtByUserId(userId, page)).then(res => {
+          const result = res.action.payload.data;
+          if (result.data.length > 0) {
+            setTotalPage(result.pagination.totalPage);
+          }
+        });
+      } else {
+        console.log('tot');
+        setPage(totalPage);
+        setLast(true);
+      }
     }
     setRefresh(false);
     setLoading(false);
@@ -54,41 +66,12 @@ export default function MyWishlist() {
     setLoadMore(false);
   };
 
-  // const getWishlist = async () => {
-  //   try {
-  //     if (page <= totalPage) {
-  //       const result = await axios.get(
-  //         `/wishlist/userId/${userId}?page=${page}`,
-  //       );
-  //       if (result.data.data.length > 0) {
-  //         if (page === 1) {
-  //           setData(result.data.data);
-  //         } else {
-  //           setData([...data, ...result.data.data]);
-  //         }
-  //         setTotalPage(result.data.pagination.totalPage);
-  //       } else {
-  //         setData([]);
-  //       }
-  //     } else {
-  //       setPage(totalPage);
-  //       setLast(true);
-  //     }
-  //     setRefresh(false);
-  //     setLoading(false);
-  //     setLoadingAll(false);
-  //     setLoadMore(false);
-  //   } catch (error) {}
-  // };
-
   const handleRefresh = () => {
-    setPage(1);
     setLast(false);
-    if (page !== 1) {
-      setRefresh(true);
-    } else {
-      getAllWishlist();
-    }
+    setLoadingAll(true);
+    setPage(1);
+    setRefresh(true);
+    getAllWishlist(true);
   };
 
   const handleLoadMore = () => {
@@ -112,28 +95,35 @@ export default function MyWishlist() {
 
   const handleDeleteWishlist = () => {
     setLoadingDelete(true);
-    dispatch(deleteWishlist(wishlistId))
+    deleteWishlist(wishlistId)
       .then(res => {
-        const result = res.action.payload.data;
-        setPage(1);
-        setLast(false);
         setLoadingAll(true);
-        setDeleteModal(false);
+        if (page === 1) {
+          dispatch(getAllWishlishtByUserId(userId, page)).then(response => {
+            const result = response.action.payload.data;
+            if (result.data.length > 0) {
+              setTotalPage(result.pagination.totalPage);
+            }
+            setLast(false);
+            setLoadingDelete(false);
+            setLoadingAll(false);
+          });
+        } else {
+          setLast(false);
+          setPage(1);
+          setDeleteModal(false);
+        }
         Toast.show({
           type: 'success',
           text1: 'Delete Wishlist',
-          text2: result.message,
-        });
-        dispatch(getAllWishlishtByUserId(userId, page)).then(response => {
-          const resultGet = response.action.payload.data;
-          if (resultGet.data.length > 0) {
-            setTotalPage(resultGet.pagination.totalPage);
-          }
-          setLoadingAll(false);
+          // text2: result.message,
         });
         setLoadingDelete(false);
+        setDeleteModal(false);
       })
-      .catch(() => {
+      .catch(err => {
+        console.log(err);
+        setLoadingAll(false);
         Toast.show({
           type: 'error',
           text1: 'Delete Wishlist',
@@ -155,7 +145,7 @@ export default function MyWishlist() {
         className={`bg-white px-7 rounded-t-[40px] mt-3 ${
           wishlist.data.length > 3 ? '' : 'h-screen'
         }`}>
-        {loadingAll || wishlist.isLoading ? (
+        {loadingAll ? (
           <View className="mt-48 items-center h-screen">
             <ActivityIndicator size={'large'} color="blue" />
           </View>

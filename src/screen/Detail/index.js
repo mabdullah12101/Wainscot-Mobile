@@ -77,7 +77,7 @@ export default function Detail({navigation, route}) {
         userId: userId,
       });
       setCheckWishlist(result.data.data[0].wishlistId);
-      dispatch(getAllWishlishtByUserId(userId, 1));
+      dispatch(getAllWishlishtByUserId(userId, 1, true));
     } catch (error) {
       console.log(error);
     }
@@ -87,7 +87,7 @@ export default function Detail({navigation, route}) {
     try {
       await axios.delete(`/wishlist/${checkWishlist}`);
       setCheckWishlist('');
-      dispatch(getAllWishlishtByUserId(userId, 1));
+      dispatch(getAllWishlishtByUserId(userId, 1, true));
     } catch (error) {
       console.log(error);
     }

@@ -1,6 +1,8 @@
 import axios from '../../utils/axios';
 
-export const getAllWishlishtByUserId = (userId, page) => {
+export const getAllWishlishtByUserId = (userId, page, refresh = false) => {
+  console.log('refresh PAGE !!!');
+  console.log(refresh);
   return {
     type:
       page === 1
@@ -18,8 +20,14 @@ export const getAllWishlishtByUserId = (userId, page) => {
 // };
 
 export const deleteWishlist = wishlistId => {
-  return {
-    type: 'DELETE_WISHLIST',
-    payload: axios.delete(`/wishlist/${wishlistId}`),
-  };
+  return new Promise((resolve, reject) => {
+    axios
+      .delete(`/wishlist/${wishlistId}`)
+      .then(res => resolve(res))
+      .catch(err => reject(err));
+  });
+  // return {
+  //   type: 'DELETE_WISHLIST',
+  //   payload: axios.delete(`/wishlist/${wishlistId}`),
+  // };
 };
