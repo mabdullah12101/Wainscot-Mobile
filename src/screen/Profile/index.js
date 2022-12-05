@@ -10,21 +10,6 @@ import FastImage from 'react-native-fast-image';
 export default function Profile({navigation}) {
   const user = useSelector(state => state.user.data);
 
-  // useEffect(() => {
-  //   getUserById();
-  // }, []);
-
-  // const getUserById = async () => {
-  //   try {
-  //     const data = await AsyncStorage.getItem('userId');
-  //     const result = await axios.get(`user/${data}`);
-  //     setUser(result.data.data[0]);
-  //     console.log(result.data.data[0]);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   const navEditProfile = () => navigation.navigate('Edit Profile');
   const navChangePassword = () => navigation.navigate('Change Password');
 
@@ -100,5 +85,3 @@ export default function Profile({navigation}) {
     </ScrollView>
   );
 }
-
-// const style = StyleSheet.create({});

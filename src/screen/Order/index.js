@@ -40,7 +40,6 @@ export default function Order({route, navigation}) {
 
   useEffect(() => {
     listBooking.map(item => {
-      // console.log(data);
       dataOrder.push({
         available: item.available,
         seat: item.section,

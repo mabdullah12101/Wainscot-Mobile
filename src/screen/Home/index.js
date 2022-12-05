@@ -14,7 +14,6 @@ import Icon from 'react-native-vector-icons/Feather';
 import axios from '../../utils/axios';
 import CardEvent from '../../components/Card/event';
 import moment from 'moment';
-import FastImage from 'react-native-fast-image';
 
 export default function Home(props) {
   const [allEvents, setAllEvents] = useState([]);
@@ -140,30 +139,6 @@ export default function Home(props) {
           </View>
         </View>
       </View>
-
-      {/* <View className="w-80 h-80 bg-white">
-        <FastImage
-          className="w-full h-full"
-          source={{
-            uri: 'https://res.cloudinary.com/dra4ha50q/image/upload/v1664919867/Wainscot-Event-Organizing/Event/igjot1muk844kqbznzdn',
-            headers: {Authorization: 'someAuthToken'},
-            priority: FastImage.priority.high,
-          }}
-          onProgress={e =>
-            console.log(e.nativeEvent.loaded / e.nativeEvent.total)
-          }
-          onLoad={e => console.log(e.nativeEvent.width, e.nativeEvent.height)}
-        />
-      </View>
-      <FastImage
-        style={{width: 200, height: 200}}
-        source={{
-          uri: 'https://unsplash.it/400/400?image=1',
-          headers: {Authorization: 'someAuthToken'},
-          priority: FastImage.priority.normal,
-        }}
-        resizeMode={FastImage.resizeMode.contain}
-      /> */}
     </ScrollView>
   );
 }

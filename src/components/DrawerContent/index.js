@@ -55,9 +55,23 @@ function DrawerContent(props) {
             style={styles.avatar}
           />
 
-          <View style={styles.biodata}>
-            <Text style={styles.title}>{user.name}</Text>
-            <Text style={styles.caption}>
+          <View className="ml-4">
+            <Text
+              style={{
+                fontSize: 16,
+                marginBottom: 3,
+                fontFamily: 'Poppins',
+                color: '#373A42',
+              }}>
+              {user.name}
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                lineHeight: 14,
+                fontFamily: 'Poppins',
+                color: '#373A42',
+              }}>
               {user.profession ? user.profession : 'Profession Not Set'}
             </Text>
           </View>

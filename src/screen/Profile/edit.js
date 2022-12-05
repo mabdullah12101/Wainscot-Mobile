@@ -261,7 +261,7 @@ export default function EditProfile() {
                 value={user.dateOfBirth ? user.dateOfBirth : 'DD/MM/YYYY'}
               /> */}
               <View className="border border-main-gray px-6 py-4 rounded-2xl text-sm tracking-medium font-poppins400 text-main-black mb-4">
-                <Text>
+                <Text className="text-main-black font-poppins400 text-sm tracking-medium">
                   {form.dateOfBirth
                     ? moment(form.dateOfBirth).format('DD-MM-YYYY')
                     : 'DD/MM/YYYY'}
