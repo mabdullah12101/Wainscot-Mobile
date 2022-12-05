@@ -255,11 +255,6 @@ export default function EditProfile() {
               Birthday Date
             </Text>
             <TouchableOpacity onPress={() => setOpen(true)}>
-              {/* <InputAuth
-                // editable={false}
-                // placeholder={user.dateOfBirth ? user.dateOfBirth : 'DD/MM/YYYY'}
-                value={user.dateOfBirth ? user.dateOfBirth : 'DD/MM/YYYY'}
-              /> */}
               <View className="border border-main-gray px-6 py-4 rounded-2xl text-sm tracking-medium font-poppins400 text-main-black mb-4">
                 <Text className="text-main-black font-poppins400 text-sm tracking-medium">
                   {form.dateOfBirth

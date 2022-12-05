@@ -1,5 +1,5 @@
 import React from 'react';
-import {Pressable, Text, TouchableOpacity} from 'react-native';
+import {Pressable, Text} from 'react-native';
 
 export default function ButtonAuth({onPress, content, isLoading}) {
   return (

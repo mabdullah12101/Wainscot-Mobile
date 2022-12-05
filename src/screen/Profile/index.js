@@ -1,8 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import axios from '../../utils/axios';
 import Config from 'react-native-config';
 import {useSelector} from 'react-redux';
 import FastImage from 'react-native-fast-image';

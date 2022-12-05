@@ -11,7 +11,6 @@ export default function InputAuth({
 }) {
   return (
     <TextInput
-      // className="border border-main-gray px-6 py-4 rounded-2xl text-sm tracking-medium font-poppins400 text-main-black mb-4"
       placeholder={placeholder}
       placeholderTextColor="#C1C5D0"
       keyboardType={keyboardType}
