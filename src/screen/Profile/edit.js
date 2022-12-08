@@ -95,21 +95,23 @@ export default function EditProfile() {
     });
     console.log(imageData);
     setLoading(true);
-    dispatch(updateImage(user.data.userId, imageData))
-      .then(() => {
+    updateImage(user.data.userId, imageData)
+      .then(response => {
+        console.log('response');
+        console.log(response.data);
         Toast.show({
           type: 'success',
           text1: 'Update Image',
-          text2: 'Success Update Image',
+          text2: response.data.message,
         });
         getDataUser();
       })
-      .catch(() => {
+      .catch(error => {
         setLoading(false);
         Toast.show({
           type: 'error',
           text1: 'Update Image',
-          text2: 'Failed Update Image',
+          text2: error.response.data.message,
         });
       });
   };
@@ -151,11 +153,18 @@ export default function EditProfile() {
             </View>
           ) : (
             <TouchableOpacity
-              className="justify-center items-center border border-main-blue w-40 h-12 rounded-lg mt-5"
+              className="justify-center items-center border border-main-blue w-52 h-12 rounded-lg mt-5"
               onPress={handleUpdateImage}>
               <Text className="font-poppins600 text-main-blue">Save</Text>
             </TouchableOpacity>
           )}
+
+          <Text className="text-main-black font-poppins400 text-xs tracking-small mt-3 mb-1">
+            Image size: max, 500 KB
+          </Text>
+          <Text className="text-main-black font-poppins400 text-xs tracking-small">
+            Image formats: JPG, JPEG, PNG
+          </Text>
         </View>
 
         <View className="mt-12">
