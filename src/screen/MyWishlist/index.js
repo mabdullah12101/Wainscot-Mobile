@@ -116,7 +116,7 @@ export default function MyWishlist() {
         Toast.show({
           type: 'success',
           text1: 'Delete Wishlist',
-          // text2: result.message,
+          text2: 'Success Delete Wishlist',
         });
         setLoadingDelete(false);
         setDeleteModal(false);

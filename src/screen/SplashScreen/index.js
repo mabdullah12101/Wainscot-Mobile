@@ -5,7 +5,9 @@ import FastImage from 'react-native-fast-image';
 
 export default function SplashScreen(props) {
   useEffect(() => {
-    checkToken();
+    setTimeout(() => {
+      checkToken();
+    }, 2000);
   }, []);
 
   const checkToken = async () => {

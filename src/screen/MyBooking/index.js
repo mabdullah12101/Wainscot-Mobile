@@ -104,7 +104,7 @@ export default function MyBooking() {
             <TouchableOpacity
               className="absolute right-4"
               onPress={handleCloseModal}>
-              <Icon name="close" size={20} />
+              <Icon name="close" size={20} color="gray" />
             </TouchableOpacity>
           </View>
 
