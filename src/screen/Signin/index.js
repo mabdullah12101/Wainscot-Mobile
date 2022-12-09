@@ -30,10 +30,12 @@ export default function Signin(props) {
 
   const handleLogin = async () => {
     setLoading(true);
-    await dispatch(login(form))
+    await login(form)
       .then(res => {
-        const result = res.action.payload.data;
+        console.log(res.data);
+        const result = res.data;
         const resultData = result.data[0];
+        console.log(resultData);
         dispatch(getDataUserById(resultData.userId));
         dispatch(getAllWishlishtByUserId(resultData.userId, 1));
         AsyncStorage.setItem('token', resultData.token);
@@ -42,8 +44,13 @@ export default function Signin(props) {
         Toast.show({type: 'success', text1: 'Success', text2: result.message});
         props.navigation.replace('AppScreen', {screen: 'MenuNavigator'});
       })
-      .catch(() => {
-        Toast.show({type: 'error', text1: 'Failed', text2: 'Login Failed'});
+      .catch(err => {
+        console.log(err.response.data);
+        Toast.show({
+          type: 'error',
+          text1: 'Failed',
+          text2: err.response.data.message,
+        });
         setLoading(false);
       });
   };
