@@ -263,7 +263,9 @@ export default function Order({route, navigation}) {
                           <Icon name="minus" size={10} color="#C1C5D0" />
                         </TouchableOpacity>
 
-                        <Text>{item.qty}</Text>
+                        <Text className="font-poppins400 text-main-black">
+                          {item.qty}
+                        </Text>
 
                         <TouchableOpacity
                           className="w-8 h-7 border border-main-gray rounded-lg justify-center items-center"
